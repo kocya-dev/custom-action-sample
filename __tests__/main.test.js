@@ -1,62 +1,75 @@
-/**
- * Unit tests for the action's main functionality, src/main.js
- *
- * To mock dependencies in ESM, you can create fixtures that export mock
- * functions and objects. For example, the core module is mocked in this test,
- * so that the actual '@actions/core' module is not imported.
- */
+// 新規ファイル: Jestを用いたテストケース
+
 import { jest } from '@jest/globals'
 import * as core from '../__fixtures__/core.js'
-import { wait } from '../__fixtures__/wait.js'
 
-// Mocks should be declared before the module being tested is imported.
+// Mocking modules
 jest.unstable_mockModule('@actions/core', () => core)
-jest.unstable_mockModule('../src/wait.js', () => ({ wait }))
+jest.unstable_mockModule('child_process', () => ({
+  execSync: jest.fn().mockImplementation(() => 'dummy output')
+}))
+global.fetch = jest
+  .fn()
+  .mockImplementation(Promise.resolve({ ok: true, statusText: 'OK' }))
 
-// The module being tested should be imported dynamically. This ensures that the
-// mocks are used in place of any actual dependencies.
 const { run } = await import('../src/main.js')
 
-describe('main.js', () => {
+describe('Custom Action Tests', () => {
   beforeEach(() => {
-    // Set the action's inputs as return values from core.getInput().
-    core.getInput.mockImplementation(() => '500')
-
-    // Mock the wait function so that it does not actually wait.
-    wait.mockImplementation(() => Promise.resolve('done!'))
+    jest.clearAllMocks()
+    process.env.GITHUB_SHA = 'dummySHA'
+    process.env.GITHUB_REPOSITORY = 'dummyRepo'
+    process.env.GITHUB_REF = 'refs/heads/dummyBranch'
   })
 
-  afterEach(() => {
-    jest.resetAllMocks()
-  })
-
-  it('Sets the time output', async () => {
-    await run()
-
-    // Verify the time output was set.
-    expect(core.setOutput).toHaveBeenNthCalledWith(
-      1,
-      'time',
-      // Simple regex to match a time string in the format HH:MM:SS.
-      expect.stringMatching(/^\d{2}:\d{2}:\d{2}/)
-    )
-  })
-
-  it('Sets a failed status', async () => {
-    // Clear the getInput mock and return an invalid value.
-    core.getInput.mockClear().mockReturnValueOnce('this is not a number')
-
-    // Clear the wait mock and return a rejected promise.
-    wait
-      .mockClear()
-      .mockRejectedValueOnce(new Error('milliseconds is not a number'))
+  it('sends correct adaptive card payload', async () => {
+    core.getInput.mockImplementation((name) => {
+      if (name === 'token') return 'dummyToken'
+      if (name === 'webhook-url') return 'https://dummy.url'
+      if (name === 'message') return 'dummyMessage'
+      return ''
+    })
 
     await run()
 
-    // Verify that the action was marked as failed.
-    expect(core.setFailed).toHaveBeenNthCalledWith(
-      1,
-      'milliseconds is not a number'
+    const expectedMessageText = `
+Custom Message: dummyMessage
+Commit SHA: dummySHA
+Repository: dummyRepo
+Branch: dummyBranch
+Commit Message: dummy output
+Changed Files:
+dummy output
+    `.trim()
+
+    expect(fetch).toHaveBeenCalledWith(
+      'https://dummy.url',
+      expect.objectContaining({
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: {
+          attachments: [
+            {
+              contentType: 'application/vnd.microsoft.card.adaptive',
+              content: {
+                $schema: 'http://adaptivecards.io/schemas/adaptive-card.json',
+                type: 'AdaptiveCard',
+                version: '1.2',
+                body: [
+                  {
+                    type: 'TextBlock',
+                    text: JSON.stringify(expectedMessageText),
+                    wrap: true,
+                    markdown: true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      })
     )
   })
 })

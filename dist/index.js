@@ -25,7 +25,7 @@ import require$$1$4 from 'url';
 import require$$3$1 from 'zlib';
 import require$$6 from 'string_decoder';
 import require$$0$9 from 'diagnostics_channel';
-import require$$2$2 from 'child_process';
+import require$$2$2, { execSync } from 'child_process';
 import require$$6$1 from 'timers';
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -27246,41 +27246,80 @@ function requireCore () {
 
 var coreExports = requireCore();
 
-/**
- * Waits for a number of milliseconds.
- *
- * @param {number} milliseconds The number of milliseconds to wait.
- * @returns {Promise<string>} Resolves with 'done!' after the wait is over.
- */
-async function wait(milliseconds) {
-  return new Promise((resolve) => {
-    if (isNaN(milliseconds)) throw new Error('milliseconds is not a number')
-
-    setTimeout(() => resolve('done!'), milliseconds);
-  })
-}
-
-/**
- * The main function for the action.
- *
- * @returns {Promise<void>} Resolves when the action is complete.
- */
 async function run() {
   try {
-    const ms = coreExports.getInput('milliseconds');
+    // inputs の取得
+    const token = coreExports.getInput('token');
+    const webhookUrl = coreExports.getInput('webhook-url');
+    const customMessage = coreExports.getInput('message');
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    coreExports.debug(`Waiting ${ms} milliseconds ...`);
+    // GitHub Actions の環境変数から基本情報を取得
+    const sha = process.env.GITHUB_SHA;
+    const repository = process.env.GITHUB_REPOSITORY;
+    const ref = process.env.GITHUB_REF;
+    // ブランチ名は "refs/heads/xxx" の形式のため、分割して取得
+    const branch = ref ? ref.split('/').slice(2).join('/') : 'unknown';
 
-    // Log the current timestamp, wait, then log the new timestamp
-    coreExports.debug(new Date().toTimeString());
-    await wait(parseInt(ms, 10));
-    coreExports.debug(new Date().toTimeString());
+    // 最新コミットのコミットメッセージ取得
+    const commitMessage = execSync(`git show -s --format=%B ${sha}`, {
+      encoding: 'utf8'
+    }).trim();
 
-    // Set outputs for other workflow steps to use
-    coreExports.setOutput('time', new Date().toTimeString());
+    // 最新コミットの変更ファイル一覧取得
+    const changedFiles = execSync(
+      `git diff-tree --no-commit-id --name-only -r ${sha}`,
+      { encoding: 'utf8' }
+    ).trim();
+
+    // Adaptive Card のメッセージ内容の作成
+    const messageText = `
+Custom Message: ${customMessage}
+Commit SHA: ${sha}
+Repository: ${repository}
+Branch: ${branch}
+Commit Message: ${commitMessage}
+Changed Files:
+${changedFiles}
+    `.trim();
+
+    // 旧: const payload = { body: [ ... ] };
+    // 新: payloadのAdaptive Card形式に変更
+    const payload = {
+      attachments: [
+        {
+          contentType: 'application/vnd.microsoft.card.adaptive',
+          content: {
+            $schema: 'http://adaptivecards.io/schemas/adaptive-card.json',
+            type: 'AdaptiveCard',
+            version: '1.2',
+            body: [
+              {
+                type: 'TextBlock',
+                text: JSON.stringify(messageText),
+                wrap: true,
+                markdown: true
+              }
+            ]
+          }
+        }
+      ]
+    };
+    console.log(payload);
+    // webhook-url に POST で Adaptive Card を送信
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: payload
+    });
+
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.statusText}`)
+    }
+
+    coreExports.debug(`Message sent successfully.`);
   } catch (error) {
-    // Fail the workflow run if an error occurs
     if (error instanceof Error) coreExports.setFailed(error.message);
   }
 }
