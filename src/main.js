@@ -59,7 +59,7 @@ ${changedFiles}
         }
       ]
     }
-    console.log(payload)
+    console.log(JSON.stringify(payload, null, 2))
     // webhook-url に POST で Adaptive Card を送信
     const response = await fetch(webhookUrl, {
       method: 'POST',
