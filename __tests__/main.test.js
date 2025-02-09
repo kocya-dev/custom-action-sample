@@ -40,7 +40,7 @@ Branch: dummyBranch
 Commit Message: dummy output
 Changed Files:
 dummy output
-    `.trim()
+    `.trim().replace(/\n/g, "\n\n")
 
     expect(fetch).toHaveBeenCalledWith(
       'https://dummy.url',
@@ -60,7 +60,7 @@ dummy output
                 body: [
                   {
                     type: 'TextBlock',
-                    text: JSON.stringify(expectedMessageText),
+                    text: expectedMessageText,
                     wrap: true,
                     markdown: true
                   }

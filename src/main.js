@@ -38,6 +38,7 @@ Commit Message: ${commitMessage}
 Changed Files:
 ${changedFiles}
     `.trim()
+    const formattedMessageText = messageText.replace(/\n/g, "\n\n")
 
     const template = core.getInput('template')
     let bodyContent
@@ -51,7 +52,7 @@ ${changedFiles}
       bodyContent = [
         {
           type: 'TextBlock',
-          text: JSON.stringify(messageText),
+          text: formattedMessageText,
           wrap: true,
           markdown: true
         }

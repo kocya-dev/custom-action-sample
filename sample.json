@@ -1,0 +1,13 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.2",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Custom Message: dummyMessage\nCommit SHA: dummySHA\nRepository: dummyRepo\nBranch: dummyBranch\nCommit Message: dummy output\nChanged Files:\ndummy output",
+      "wrap": true,
+      "markdown": true
+    }
+  ]
+}
