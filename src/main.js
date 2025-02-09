@@ -28,6 +28,8 @@ export async function run() {
       { encoding: 'utf8' }
     ).trim()
 
+    console.log(`Changed Files: ${changedFiles}`)
+
     // Adaptive Card のメッセージ内容の作成
     const messageText = `
 Custom Message: ${customMessage}
