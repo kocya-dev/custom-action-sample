@@ -15,6 +15,9 @@ inputs:
   webhook-url:
     description: 'Webhook URL for sending the Adaptive Card'
     required: true
+  template:
+    description: 'Path to the Adaptive Card template'
+    required: false
   message:
     description: 'Custom message to include in the payload'
     required: false

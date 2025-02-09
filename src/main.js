@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
 import { execSync } from 'child_process'
+import fs from 'fs'
 
 export async function run() {
   try {
@@ -38,8 +39,25 @@ Changed Files:
 ${changedFiles}
     `.trim()
 
-    // 旧: const payload = { body: [ ... ] };
-    // 新: payloadのAdaptive Card形式に変更
+    const template = core.getInput('template')
+    let bodyContent
+    if (template) {
+      try {
+        bodyContent = JSON.parse(fs.readFileSync(template, { encoding: 'utf8' }))
+      } catch (err) {
+        throw new Error(`Failed to load template from ${template}: ${err.message}`)
+      }
+    } else {
+      bodyContent = [
+        {
+          type: 'TextBlock',
+          text: JSON.stringify(messageText),
+          wrap: true,
+          markdown: true
+        }
+      ]
+    }
+
     const payload = {
       attachments: [
         {
@@ -48,14 +66,7 @@ ${changedFiles}
             $schema: 'http://adaptivecards.io/schemas/adaptive-card.json',
             type: 'AdaptiveCard',
             version: '1.2',
-            body: [
-              {
-                type: 'TextBlock',
-                text: JSON.stringify(messageText),
-                wrap: true,
-                markdown: true
-              }
-            ]
+            body: bodyContent
           }
         }
       ]

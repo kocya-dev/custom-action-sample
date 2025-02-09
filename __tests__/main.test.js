@@ -72,4 +72,44 @@ dummy output
       })
     )
   })
+
+  it('sends adaptive card payload using template', async () => {
+    core.getInput.mockImplementation((name) => {
+      if (name === 'token') return 'dummyToken';
+      if (name === 'webhook-url') return 'https://dummy.url';
+      if (name === 'message') return 'dummyMessage';
+      if (name === 'template') return './__test__/assets/template.json';
+      return '';
+    });
+
+    await run();
+
+    const expectedTemplate = [
+      {
+        type: 'TextBlock',
+        text: 'This is a test template',
+        wrap: true
+      }
+    ];
+
+    expect(fetch).toHaveBeenCalledWith(
+      'https://dummy.url',
+      expect.objectContaining({
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: expect.objectContaining({
+          attachments: [
+            {
+              contentType: 'application/vnd.microsoft.card.adaptive',
+              content: expect.objectContaining({
+                body: expectedTemplate
+              })
+            }
+          ]
+        })
+      })
+    );
+  })
 })
