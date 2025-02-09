@@ -27249,7 +27249,8 @@ var coreExports = requireCore();
 async function run() {
   try {
     // inputs の取得
-    const token = coreExports.getInput('token');
+    const tokenInput = coreExports.getInput('token');
+    const token = tokenInput || process.env.GITHUB_TOKEN;
     const webhookUrl = coreExports.getInput('webhook-url');
     const customMessage = coreExports.getInput('message');
 

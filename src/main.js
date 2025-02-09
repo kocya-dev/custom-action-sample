@@ -4,7 +4,8 @@ import { execSync } from 'child_process'
 export async function run() {
   try {
     // inputs の取得
-    const token = core.getInput('token')
+    const tokenInput = core.getInput('token')
+    const token = tokenInput || process.env.GITHUB_TOKEN
     const webhookUrl = core.getInput('webhook-url')
     const customMessage = core.getInput('message')
 
