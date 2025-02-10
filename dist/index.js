@@ -31368,6 +31368,12 @@ const makeDefaultBody = (customMessage1, customMessage2, commitMessage, changedF
   if (customMessage2) {
     body.push(singleTextBlockCustom2);
   }
+  coreExports.group('default template', () => {
+    coreExports.info(body);
+  });
+  coreExports.group('default template', () => {
+    coreExports.info(JSON.stringify(body, null, 2));
+  });
   return JSON.parse(replaceBodyParameters(JSON.stringify(body), customMessage1, customMessage2, commitMessage, changedFiles))
 };
 
@@ -31382,6 +31388,13 @@ const makeDefaultBody = (customMessage1, customMessage2, commitMessage, changedF
  * @returns {string} - The target string with all placeholders replaced by their corresponding values.
  */
 const replaceBodyParameters = (target, customMessage1, customMessage2, commitMessage, changedFiles) => {
+  coreExports.group('replaceBodyParameters', () => {
+    coreExports.info(`Replacing parameters for target: ${target}`);
+    coreExports.info(`commitMessage: ${commitMessage}`);
+    coreExports.info(`changedFiles: ${changedFiles}`);
+    coreExports.info(`customMessage1: ${customMessage1}`);
+    coreExports.info(`customMessage2: ${customMessage2}`);
+  });
   return target
     .replace('{GITHUB_RUN_ID}', githubExports.context.runId)
     .replace('{COMMIT_MESSAGE}', commitMessage)
@@ -31437,6 +31450,7 @@ const getInputs = () => {
  * @throws {Error} Throws an error if the template file specified by inputs.template cannot be loaded or parsed.
  */
 const getBody = (inputs, commitMessage, changedFiles) => {
+  coreExports.group('input parameter', () => coreExports.info(JSON.stringify(inputs, null, 2)));
   if (inputs.template) {
     try {
       const templatesContent = require$$1.readFileSync(inputs.template, { encoding: 'utf8' });
@@ -31464,6 +31478,8 @@ const getBody = (inputs, commitMessage, changedFiles) => {
  * @returns {Object} An object representing the Adaptive Card payload with attachments.
  */
 const createAdapterCardPayload = (inputs, commitMessage, changedFiles) => {
+  coreExports.group('input parameter', () => coreExports.info(inputs, commitMessage, changedFiles));
+
   const bodyContent = getBody(inputs, commitMessage, changedFiles);
   const actionsContent = makeAction(inputs.actionTitles, inputs.actionUrls);
 
