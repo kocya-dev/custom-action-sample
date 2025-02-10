@@ -31369,9 +31369,6 @@ const makeDefaultBody = (customMessage1, customMessage2, commitMessage, changedF
     body.push(singleTextBlockCustom2);
   }
   coreExports.group('default template', () => {
-    coreExports.info(body);
-  });
-  coreExports.group('default template', () => {
     coreExports.info(JSON.stringify(body, null, 2));
   });
   return JSON.parse(replaceBodyParameters(JSON.stringify(body), customMessage1, customMessage2, commitMessage, changedFiles))
@@ -31450,7 +31447,6 @@ const getInputs = () => {
  * @throws {Error} Throws an error if the template file specified by inputs.template cannot be loaded or parsed.
  */
 const getBody = (inputs, commitMessage, changedFiles) => {
-  coreExports.group('input parameter', () => coreExports.info(JSON.stringify(inputs, null, 2)));
   if (inputs.template) {
     try {
       const templatesContent = require$$1.readFileSync(inputs.template, { encoding: 'utf8' });

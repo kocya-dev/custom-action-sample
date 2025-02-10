@@ -24,11 +24,7 @@ const jestConfig = {
   testEnvironment: 'node',
   testMatch: ['**/*.test.js'],
   testPathIgnorePatterns: ['/dist/', '/node_modules/'],
-  verbose: true,
-  transform: {
-    '^.+\\.js$': 'babel-jest'
-  },
-  transformIgnorePatterns: ['/node_modules/']
+  verbose: true
 }
 
 export default jestConfig

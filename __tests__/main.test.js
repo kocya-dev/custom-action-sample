@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals'
 import * as core from '../__fixtures__/core.js'
 import { context } from '../__fixtures__/context.js'
-import * as fs from 'fs'
+
 jest.unstable_mockModule('@actions/core', () => core)
 jest.unstable_mockModule('@actions/github', () => {
   return { context }
