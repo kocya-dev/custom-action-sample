@@ -20,19 +20,15 @@ inputs:
   message1:
     description: 'Custom message to include in the payload'
     required: false
-    default: 'Default message'
   message2:
     description: 'Custom message to include in the payload'
     required: false
-    default: 'Default message'
   action-titles:
     description: 'Action titles to include in the payload'
     required: false
-    default: 'Default message'
   action-urls:
     description: 'Action URLs to include in the payload'
     required: false
-    default: 'Default message'
 
 runs:
   using: node20
