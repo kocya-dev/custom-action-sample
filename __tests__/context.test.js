@@ -1,32 +1,33 @@
-
 import { jest } from '@jest/globals'
 import { context } from '../__fixtures__/context.js'
-jest.unstable_mockModule('@actions/github', () => { return { context }; })
+jest.unstable_mockModule('@actions/github', () => {
+  return { context }
+})
 
-context.runId = '123';
+context.runId = '123'
 context.payload = {
   repository: {
     name: 'test-repo'
   }
-};
-context.ref = 'refs/heads/main';
-context.eventName = 'push';
-context.workflow = 'CI';
-context.actor = 'test-actor';
-context.sha = 'abc123';
-context.job = JSON.stringify({ status: 'success' });
-context.serverUrl = 'https://github.com';
+}
+context.ref = 'refs/heads/main'
+context.eventName = 'push'
+context.workflow = 'CI'
+context.actor = 'test-actor'
+context.sha = 'abc123'
+context.job = JSON.stringify({ status: 'success' })
+context.serverUrl = 'https://github.com'
 
 const { makeDefaultBody, makeAction } = await import('../src/contents.js')
 
 describe('makeDefaultBody', () => {
   it('should create a default body with all parameters', () => {
-    const customMessage1 = 'Custom Message 1';
-    const customMessage2 = 'Custom Message 2';
-    const commitMessage = 'Initial commit';
-    const changedFiles = 'file1.js, file2.js';
+    const customMessage1 = 'Custom Message 1'
+    const customMessage2 = 'Custom Message 2'
+    const commitMessage = 'Initial commit'
+    const changedFiles = 'file1.js, file2.js'
 
-    const body = makeDefaultBody(customMessage1, customMessage2, commitMessage, changedFiles);
+    const body = makeDefaultBody(customMessage1, customMessage2, commitMessage, changedFiles)
 
     expect(body).toEqual([
       {
@@ -78,16 +79,16 @@ describe('makeDefaultBody', () => {
         separator: true,
         wrap: true
       }
-    ]);
-  });
+    ])
+  })
 
   it('should create a default body without custom messages', () => {
-    const customMessage1 = '';
-    const customMessage2 = '';
-    const commitMessage = 'Initial commit';
-    const changedFiles = 'file1.js, file2.js';
+    const customMessage1 = ''
+    const customMessage2 = ''
+    const commitMessage = 'Initial commit'
+    const changedFiles = 'file1.js, file2.js'
 
-    const body = makeDefaultBody(customMessage1, customMessage2, commitMessage, changedFiles);
+    const body = makeDefaultBody(customMessage1, customMessage2, commitMessage, changedFiles)
 
     expect(body).toEqual([
       {
@@ -127,9 +128,9 @@ describe('makeDefaultBody', () => {
         ],
         id: 'acFactSet'
       }
-    ]);
-  });
-});
+    ])
+  })
+})
 
 describe('makeAction', () => {
   beforeEach(() => {

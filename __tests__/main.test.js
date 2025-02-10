@@ -3,26 +3,27 @@ import * as core from '../__fixtures__/core.js'
 import { context } from '../__fixtures__/context.js'
 import * as fs from 'fs'
 jest.unstable_mockModule('@actions/core', () => core)
-jest.unstable_mockModule('@actions/github', () => { return { context }; })
+jest.unstable_mockModule('@actions/github', () => {
+  return { context }
+})
 jest.unstable_mockModule('child_process', () => ({
   execSync: jest.fn().mockImplementation(() => 'dummy output')
 }))
-context.runId = '123';
+context.runId = '123'
 context.payload = {
   repository: {
     name: 'test-repo'
   }
-};
-context.ref = 'refs/heads/main';
-context.eventName = 'push';
-context.workflow = 'CI';
-context.actor = 'test-actor';
-context.sha = 'abc123';
-context.job = JSON.stringify({ status: 'success' });
-context.serverUrl = 'https://github.com';
+}
+context.ref = 'refs/heads/main'
+context.eventName = 'push'
+context.workflow = 'CI'
+context.actor = 'test-actor'
+context.sha = 'abc123'
+context.job = JSON.stringify({ status: 'success' })
+context.serverUrl = 'https://github.com'
 
 global.fetch = jest.fn().mockImplementation(() => Promise.resolve({ ok: true, statusText: 'OK' }))
-
 
 const { run } = await import('../src/main.js')
 
@@ -145,33 +146,33 @@ describe('Custom Action Tests', () => {
 
   it('calls core.setFailed when template file cannot be opened', async () => {
     core.getInput.mockImplementation((name) => {
-      if (name === 'token') return 'dummyToken';
-      if (name === 'webhook-url') return 'https://dummy.url';
-      if (name === 'template') return './nonexistent/template.json';
-      if (name === 'message1') return 'dummyMessage1';
-      if (name === 'message2') return 'dummyMessage2';
-      if (name === 'action-titles') return '';
-      if (name === 'action-urls') return '';
-      return '';
+      if (name === 'token') return 'dummyToken'
+      if (name === 'webhook-url') return 'https://dummy.url'
+      if (name === 'template') return './nonexistent/template.json'
+      if (name === 'message1') return 'dummyMessage1'
+      if (name === 'message2') return 'dummyMessage2'
+      if (name === 'action-titles') return ''
+      if (name === 'action-urls') return ''
+      return ''
     })
-    await run();
-    expect(core.setFailed).toHaveBeenCalled();
-    expect(core.setFailed.mock.calls[0][0]).toMatch(/Failed to load template/);
+    await run()
+    expect(core.setFailed).toHaveBeenCalled()
+    expect(core.setFailed.mock.calls[0][0]).toMatch(/Failed to load template/)
   })
 
   it('calls core.setFailed when webhook responds with non-ok status', async () => {
-    global.fetch.mockImplementationOnce(() => Promise.resolve({ ok: false, statusText: 'Internal Server Error' }));
+    global.fetch.mockImplementationOnce(() => Promise.resolve({ ok: false, statusText: 'Internal Server Error' }))
     core.getInput.mockImplementation((name) => {
-      if (name === 'token') return 'dummyToken';
-      if (name === 'webhook-url') return 'https://dummy.url';
-      if (name === 'template') return '';
-      if (name === 'message1') return 'dummyMessage1';
-      if (name === 'message2') return 'dummyMessage2';
-      if (name === 'action-titles') return 'Title1\nTitle2';
-      if (name === 'action-urls') return 'https://url1\nhttps://url2';
-      return '';
+      if (name === 'token') return 'dummyToken'
+      if (name === 'webhook-url') return 'https://dummy.url'
+      if (name === 'template') return ''
+      if (name === 'message1') return 'dummyMessage1'
+      if (name === 'message2') return 'dummyMessage2'
+      if (name === 'action-titles') return 'Title1\nTitle2'
+      if (name === 'action-urls') return 'https://url1\nhttps://url2'
+      return ''
     })
-    await run();
-    expect(core.setFailed).toHaveBeenCalledWith(expect.stringMatching(/Request failed: Internal Server Error/));
+    await run()
+    expect(core.setFailed).toHaveBeenCalledWith(expect.stringMatching(/Request failed: Internal Server Error/))
   })
 })

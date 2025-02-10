@@ -4,7 +4,6 @@ import { execSync } from 'child_process'
 import fs from 'fs'
 import { makeDefaultBody, makeAction, replaceBodyParameters } from './contents'
 
-
 /**
  * Retrieves and processes input values required for the custom action.
  *
@@ -47,18 +46,18 @@ const getInputs = () => {
 const getBody = (inputs, commitMessage, changedFiles) => {
   if (inputs.template) {
     try {
-      const templatesContent = fs.readFileSync(inputs.template, { encoding: 'utf8' });
-      const processedContent = replaceBodyParameters(templatesContent, inputs.customMessage1, inputs.customMessage2, commitMessage, changedFiles);
-      core.group('Template content', () => core.info(templatesContent));
-      core.group('Processed content', () => core.info(processedContent));
-      return JSON.parse(processedContent);
+      const templatesContent = fs.readFileSync(inputs.template, { encoding: 'utf8' })
+      const processedContent = replaceBodyParameters(templatesContent, inputs.customMessage1, inputs.customMessage2, commitMessage, changedFiles)
+      core.group('Template content', () => core.info(templatesContent))
+      core.group('Processed content', () => core.info(processedContent))
+      return JSON.parse(processedContent)
     } catch (err) {
-      throw new Error(`Failed to load template from ${inputs.template}: ${err.message}`);
+      throw new Error(`Failed to load template from ${inputs.template}: ${err.message}`)
     }
   } else {
-    const defaultBody = makeDefaultBody(inputs.customMessage1, inputs.customMessage2, commitMessage, changedFiles);
-    core.group('Default body', () => core.info(JSON.stringify(defaultBody, null, 2)));
-    return defaultBody;
+    const defaultBody = makeDefaultBody(inputs.customMessage1, inputs.customMessage2, commitMessage, changedFiles)
+    core.group('Default body', () => core.info(JSON.stringify(defaultBody, null, 2)))
+    return defaultBody
   }
 }
 /**
@@ -72,8 +71,8 @@ const getBody = (inputs, commitMessage, changedFiles) => {
  * @returns {Object} An object representing the Adaptive Card payload with attachments.
  */
 const createAdapterCardPayload = (inputs, commitMessage, changedFiles) => {
-  const bodyContent = getBody(inputs, commitMessage, changedFiles);
-  const actionsContent = makeAction(inputs.actionTitles, inputs.actionUrls);
+  const bodyContent = getBody(inputs, commitMessage, changedFiles)
+  const actionsContent = makeAction(inputs.actionTitles, inputs.actionUrls)
 
   return {
     attachments: [
@@ -114,25 +113,25 @@ const postWebhookUrl = async (webhookUrl, payload) => {
 export async function run() {
   try {
     // get inputs
-    const inputs = getInputs();
+    const inputs = getInputs()
 
     // Retrieve basic information from GitHub Actions environment variables
     const sha = context.sha
 
     // Get the latest commit message
-    const commitMessage = execSync(`git show -s --format=%B ${sha}`, { encoding: 'utf8' }).trim();
-    core.info(`Commit message: ${commitMessage}`);
+    const commitMessage = execSync(`git show -s --format=%B ${sha}`, { encoding: 'utf8' }).trim()
+    core.info(`Commit message: ${commitMessage}`)
 
     // Get the list of changed files from the latest commit
-    const changedFiles = execSync(`git diff-tree --no-commit-id --name-only -r ${sha}`, { encoding: 'utf8' }).trim();
-    core.info(`Changed Files: ${changedFiles}`);
+    const changedFiles = execSync(`git diff-tree --no-commit-id --name-only -r ${sha}`, { encoding: 'utf8' }).trim()
+    core.info(`Changed Files: ${changedFiles}`)
 
     // Create the body and actions of the Adaptive Card
-    const payload = createAdapterCardPayload(inputs, commitMessage, changedFiles);
-    core.info(JSON.stringify(payload, null, 2));
+    const payload = createAdapterCardPayload(inputs, commitMessage, changedFiles)
+    core.info(JSON.stringify(payload, null, 2))
 
     // Send Adaptive Card to webhook-url via POST request
-    await postWebhookUrl(inputs.webhookUrl, payload);
+    await postWebhookUrl(inputs.webhookUrl, payload)
 
     core.info(`Message sent successfully.`)
   } catch (error) {
