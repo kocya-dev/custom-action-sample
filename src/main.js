@@ -44,6 +44,7 @@ const getInputs = () => {
  * @throws {Error} Throws an error if the template file specified by inputs.template cannot be loaded or parsed.
  */
 const getBody = (inputs, commitMessage, changedFiles) => {
+  core.group('input parameter', () => core.info(JSON.stringify(inputs, null, 2)))
   if (inputs.template) {
     try {
       const templatesContent = fs.readFileSync(inputs.template, { encoding: 'utf8' })
