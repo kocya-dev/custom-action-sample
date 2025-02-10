@@ -8,9 +8,7 @@ jest.unstable_mockModule('@actions/core', () => core)
 jest.unstable_mockModule('child_process', () => ({
   execSync: jest.fn().mockImplementation(() => 'dummy output')
 }))
-global.fetch = jest
-  .fn()
-  .mockImplementation(Promise.resolve({ ok: true, statusText: 'OK' }))
+global.fetch = jest.fn().mockImplementation(Promise.resolve({ ok: true, statusText: 'OK' }))
 
 const { run } = await import('../src/main.js')
 
@@ -40,7 +38,9 @@ Branch: dummyBranch
 Commit Message: dummy output
 Changed Files:
 dummy output
-    `.trim().replace(/\n/g, "\n\n")
+    `
+      .trim()
+      .replace(/\n/g, '\n\n')
 
     expect(fetch).toHaveBeenCalledWith(
       'https://dummy.url',
@@ -75,14 +75,14 @@ dummy output
 
   it('sends adaptive card payload using template', async () => {
     core.getInput.mockImplementation((name) => {
-      if (name === 'token') return 'dummyToken';
-      if (name === 'webhook-url') return 'https://dummy.url';
-      if (name === 'message') return 'dummyMessage';
-      if (name === 'template') return './__test__/assets/template.json';
-      return '';
-    });
+      if (name === 'token') return 'dummyToken'
+      if (name === 'webhook-url') return 'https://dummy.url'
+      if (name === 'message') return 'dummyMessage'
+      if (name === 'template') return './__test__/assets/template.json'
+      return ''
+    })
 
-    await run();
+    await run()
 
     const expectedTemplate = [
       {
@@ -90,7 +90,7 @@ dummy output
         text: 'This is a test template',
         wrap: true
       }
-    ];
+    ]
 
     expect(fetch).toHaveBeenCalledWith(
       'https://dummy.url',
@@ -110,6 +110,6 @@ dummy output
           ]
         })
       })
-    );
+    )
   })
 })

@@ -1,8 +1,8 @@
 import * as core from '@actions/core'
-import {context} from '@actions/github'
+import { context } from '@actions/github'
 import { execSync } from 'child_process'
 import fs from 'fs'
-import {defaultBody, getAction} from './contents'
+import { defaultBody, makeAction } from './contents'
 
 export async function run() {
   try {
@@ -25,10 +25,7 @@ export async function run() {
     }).trim()
 
     // 最新コミットの変更ファイル一覧取得
-    const changedFiles = execSync(
-      `git diff-tree --no-commit-id --name-only -r ${sha}`,
-      { encoding: 'utf8' }
-    ).trim()
+    const changedFiles = execSync(`git diff-tree --no-commit-id --name-only -r ${sha}`, { encoding: 'utf8' }).trim()
 
     console.log(`Changed Files: ${changedFiles}`)
 
@@ -42,7 +39,7 @@ Commit Message: ${commitMessage}
 Changed Files:
 ${changedFiles}
     `.trim()
-    const formattedMessageText = messageText.replace(/\n/g, "\n\n")
+    const formattedMessageText = messageText.replace(/\n/g, '\n\n')
 
     const template = core.getInput('template')
     let bodyContent
@@ -53,7 +50,7 @@ ${changedFiles}
         throw new Error(`Failed to load template from ${template}: ${err.message}`)
       }
     } else {
-      bodyContent = defaultBody;
+      bodyContent = defaultBody
     }
 
     const payload = {
@@ -65,7 +62,7 @@ ${changedFiles}
             type: 'AdaptiveCard',
             version: '1.2',
             body: bodyContent,
-            actions: getAction(),
+            actions: makeAction()
           }
         }
       ]

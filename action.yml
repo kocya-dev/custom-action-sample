@@ -8,8 +8,7 @@ branding:
 
 inputs:
   token:
-    description:
-      'GitHub token (if not provided, uses GITHUB_TOKEN env variable)'
+    description: 'GitHub token (if not provided, uses GITHUB_TOKEN env variable)'
     required: false
     default: ''
   webhook-url:
@@ -18,8 +17,20 @@ inputs:
   template:
     description: 'Path to the Adaptive Card template'
     required: false
-  message:
+  message1:
     description: 'Custom message to include in the payload'
+    required: false
+    default: 'Default message'
+  message2:
+    description: 'Custom message to include in the payload'
+    required: false
+    default: 'Default message'
+  action-titles:
+    description: 'Action titles to include in the payload'
+    required: false
+    default: 'Default message'
+  action-urls:
+    description: 'Action URLs to include in the payload'
     required: false
     default: 'Default message'
 
