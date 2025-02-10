@@ -59,4 +59,7 @@ jobs:
         with:
           token: GITHUB_TOKEN
           webhook-url: 'https://example.com'
-          message: 'Your message here'
+          message1: 'test1'
+          message2: 'test2'
+          action-titles: 'title1'
+          action-urls: 'https://www.yahoo.co.jp/'
