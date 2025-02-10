@@ -1,6 +1,8 @@
 import * as core from '@actions/core'
+import {context} from '@actions/github'
 import { execSync } from 'child_process'
 import fs from 'fs'
+import {defaultBody, getAction} from './contents'
 
 export async function run() {
   try {
@@ -11,9 +13,9 @@ export async function run() {
     const customMessage = core.getInput('message')
 
     // GitHub Actions の環境変数から基本情報を取得
-    const sha = process.env.GITHUB_SHA
-    const repository = process.env.GITHUB_REPOSITORY
-    const ref = process.env.GITHUB_REF
+    const sha = context.sha
+    const repository = context.payload.repository?.name
+    const ref = context.ref
     // ブランチ名は "refs/heads/xxx" の形式のため、分割して取得
     const branch = ref ? ref.split('/').slice(2).join('/') : 'unknown'
 
@@ -51,14 +53,7 @@ ${changedFiles}
         throw new Error(`Failed to load template from ${template}: ${err.message}`)
       }
     } else {
-      bodyContent = [
-        {
-          type: 'TextBlock',
-          text: formattedMessageText,
-          wrap: true,
-          markdown: true
-        }
-      ]
+      bodyContent = defaultBody;
     }
 
     const payload = {
@@ -69,7 +64,8 @@ ${changedFiles}
             $schema: 'http://adaptivecards.io/schemas/adaptive-card.json',
             type: 'AdaptiveCard',
             version: '1.2',
-            body: bodyContent
+            body: bodyContent,
+            actions: getAction(),
           }
         }
       ]
