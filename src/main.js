@@ -135,6 +135,7 @@ export async function run() {
 
     core.info(`Message sent successfully.`)
   } catch (error) {
+    core.error(error)
     if (error instanceof Error) core.setFailed(error.message)
   }
 }

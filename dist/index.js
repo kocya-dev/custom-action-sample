@@ -31321,6 +31321,7 @@ const getBranch = () => {
 const makeAction = (titles, urls) => {
   const actions = [];
   if (titles.length != urls.length) {
+    coreExports.error('Action titles and URLs must have the same length.');
     throw new Error('Action titles and URLs must have the same length.')
   }
 
@@ -31336,6 +31337,7 @@ const makeAction = (titles, urls) => {
   // Create an action for each parameter provided.
   for (let i = 0; i < titles.length; i++) {
     if (!titles[i] || !urls[i]) {
+      coreExports.error('Action titles and URLs must have the same length.');
       throw new Error('Action parameters must contain a title and URL.')
     }
     actions.push({
@@ -31526,6 +31528,7 @@ async function run() {
 
     coreExports.info(`Message sent successfully.`);
   } catch (error) {
+    coreExports.error(error);
     if (error instanceof Error) coreExports.setFailed(error.message);
   }
 }
