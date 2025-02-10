@@ -72,6 +72,8 @@ const getBody = (inputs, commitMessage, changedFiles) => {
  * @returns {Object} An object representing the Adaptive Card payload with attachments.
  */
 const createAdapterCardPayload = (inputs, commitMessage, changedFiles) => {
+  core.group('input parameter', () => core.info(JSON.stringify(inputs, null, 2)))
+  
   const bodyContent = getBody(inputs, commitMessage, changedFiles)
   const actionsContent = makeAction(inputs.actionTitles, inputs.actionUrls)
 
