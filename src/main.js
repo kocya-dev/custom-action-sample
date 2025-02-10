@@ -117,6 +117,7 @@ export async function run() {
   try {
     // get inputs
     const inputs = getInputs()
+    core.info(`inputs: ${inputs}`)
 
     // Retrieve basic information from GitHub Actions environment variables
     const sha = context.sha
@@ -130,6 +131,7 @@ export async function run() {
     core.info(`Changed Files: ${changedFiles}`)
 
     // Create the body and actions of the Adaptive Card
+    core.info(`inputs: ${inputs}`)
     const payload = createAdapterCardPayload(inputs, commitMessage, changedFiles)
     core.info(JSON.stringify(payload, null, 2))
 

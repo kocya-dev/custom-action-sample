@@ -31523,6 +31523,7 @@ async function run() {
   try {
     // get inputs
     const inputs = getInputs();
+    coreExports.info(`inputs: ${inputs}`);
 
     // Retrieve basic information from GitHub Actions environment variables
     const sha = githubExports.context.sha;
@@ -31536,6 +31537,7 @@ async function run() {
     coreExports.info(`Changed Files: ${changedFiles}`);
 
     // Create the body and actions of the Adaptive Card
+    coreExports.info(`inputs: ${inputs}`);
     const payload = createAdapterCardPayload(inputs, commitMessage, changedFiles);
     coreExports.info(JSON.stringify(payload, null, 2));
 
