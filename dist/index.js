@@ -31366,8 +31366,8 @@ const makeDefaultBody = (customMessage1, customMessage2, commitMessage, changedF
  * @returns {string} - The target string with all placeholders replaced by their corresponding values.
  */
 const replaceBodyParameters = (target, customMessage1, customMessage2, commitMessage, changedFiles) => {
-  coreExports.group('replaceBodyParameters', () => {
-    coreExports.info(`Replacing parameters for target: ${target}`);
+  coreExports.group('ReplaceBodyParameters', () => {
+    coreExports.info(`replacing parameters for target: ${target}`);
     coreExports.info(`commitMessage: ${commitMessage}`);
     coreExports.info(`changedFiles: ${changedFiles}`);
     coreExports.info(`customMessage1: ${customMessage1}`);
@@ -31455,12 +31455,6 @@ const getBody = (inputs, commitMessage, changedFiles) => {
  * @returns {Object} An object representing the Adaptive Card payload with attachments.
  */
 const createAdapterCardPayload = (inputs, commitMessage, changedFiles) => {
-  coreExports.group('input parameters', () =>
-    coreExports.info(
-      `Action Titles: ${inputs.actionTitles.join(', ')}, Action URLs: ${inputs.actionUrls.join(', ')}, Commit Message: ${commitMessage}, Changed Files: ${changedFiles}`
-    )
-  );
-
   const bodyContent = getBody(inputs, commitMessage, changedFiles);
   const actionsContent = makeAction(inputs.actionTitles, inputs.actionUrls);
 
@@ -31504,29 +31498,29 @@ async function run() {
   try {
     // get inputs
     const inputs = getInputs();
-    coreExports.info(`inputs: ${JSON.stringify(inputs, null, 2)}`);
+    coreExports.group('Inputs', () => coreExports.info(JSON.stringify(inputs, null, 2)));
 
     // Retrieve basic information from GitHub Actions environment variables
     const sha = githubExports.context.sha;
 
     // Get the latest commit message
     const commitMessage = execSync(`git show -s --format=%B ${sha}`, { encoding: 'utf8' }).trim();
-    coreExports.info(`Commit message: ${commitMessage}`);
+    coreExports.info(`commit message: ${commitMessage}`);
 
     // Get the list of changed files from the latest commit
     const changedFiles = execSync(`git diff-tree --no-commit-id --name-only -r ${sha}`, { encoding: 'utf8' }).trim();
-    coreExports.info(`Changed Files: ${changedFiles}`);
+    coreExports.info(`changed files: ${changedFiles}`);
 
     // Create the body and actions of the Adaptive Card
     const payload = createAdapterCardPayload(inputs, commitMessage, changedFiles);
-    coreExports.info(JSON.stringify(payload, null, 2));
+    coreExports.group('Payload', () => coreExports.info(JSON.stringify(payload, null, 2)));
 
     // Send Adaptive Card to webhook-url via POST request
     await postWebhookUrl(inputs.webhookUrl, payload);
 
-    coreExports.info(`Message sent successfully.`);
+    coreExports.group('Result', () => coreExports.info('Message sent successfully.'));
   } catch (error) {
-    coreExports.error(error);
+    coreExports.group('Error', () => coreExports.error(error));
     if (error instanceof Error) coreExports.setFailed(error.message);
   }
 }

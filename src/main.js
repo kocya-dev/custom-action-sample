@@ -71,12 +71,6 @@ const getBody = (inputs, commitMessage, changedFiles) => {
  * @returns {Object} An object representing the Adaptive Card payload with attachments.
  */
 const createAdapterCardPayload = (inputs, commitMessage, changedFiles) => {
-  core.group('input parameters', () =>
-    core.info(
-      `Action Titles: ${inputs.actionTitles.join(', ')}, Action URLs: ${inputs.actionUrls.join(', ')}, Commit Message: ${commitMessage}, Changed Files: ${changedFiles}`
-    )
-  )
-
   const bodyContent = getBody(inputs, commitMessage, changedFiles)
   const actionsContent = makeAction(inputs.actionTitles, inputs.actionUrls)
 
@@ -120,29 +114,29 @@ export async function run() {
   try {
     // get inputs
     const inputs = getInputs()
-    core.info(`inputs: ${JSON.stringify(inputs, null, 2)}`)
+    core.group('Inputs', () => core.info(JSON.stringify(inputs, null, 2)))
 
     // Retrieve basic information from GitHub Actions environment variables
     const sha = context.sha
 
     // Get the latest commit message
     const commitMessage = execSync(`git show -s --format=%B ${sha}`, { encoding: 'utf8' }).trim()
-    core.info(`Commit message: ${commitMessage}`)
+    core.info(`commit message: ${commitMessage}`)
 
     // Get the list of changed files from the latest commit
     const changedFiles = execSync(`git diff-tree --no-commit-id --name-only -r ${sha}`, { encoding: 'utf8' }).trim()
-    core.info(`Changed Files: ${changedFiles}`)
+    core.info(`changed files: ${changedFiles}`)
 
     // Create the body and actions of the Adaptive Card
     const payload = createAdapterCardPayload(inputs, commitMessage, changedFiles)
-    core.info(JSON.stringify(payload, null, 2))
+    core.group('Payload', () => core.info(JSON.stringify(payload, null, 2)))
 
     // Send Adaptive Card to webhook-url via POST request
     await postWebhookUrl(inputs.webhookUrl, payload)
 
-    core.info(`Message sent successfully.`)
+    core.group('Result', () => core.info('Message sent successfully.'))
   } catch (error) {
-    core.error(error)
+    core.group('Error', () => core.error(error))
     if (error instanceof Error) core.setFailed(error.message)
   }
 }
