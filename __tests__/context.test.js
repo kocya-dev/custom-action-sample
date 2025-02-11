@@ -31,10 +31,10 @@ describe('makeDefaultBody', () => {
     expect(body).toEqual([
       {
         type: 'TextBlock',
-        text: 'No. 123 Initial commit',
+        text: 'No.123 Initial commit',
         id: 'Title',
         spacing: 'Medium',
-        size: 'ExtraLarge',
+        size: 'large',
         weight: 'Bolder',
         color: 'Accent'
       },
@@ -86,10 +86,10 @@ describe('makeDefaultBody', () => {
     expect(body).toEqual([
       {
         type: 'TextBlock',
-        text: 'No. 123 Initial commit',
+        text: 'No.123 Initial commit',
         id: 'Title',
         spacing: 'Medium',
-        size: 'ExtraLarge',
+        size: 'large',
         weight: 'Bolder',
         color: 'Accent'
       },

@@ -31232,10 +31232,10 @@ var githubExports = requireGithub();
 
 const titleBlock = {
   type: 'TextBlock',
-  text: 'No. {GITHUB_RUN_NUMBER} {COMMIT_MESSAGE}',
+  text: 'No.{GITHUB_RUN_NUMBER} {COMMIT_MESSAGE}',
   id: 'Title',
   spacing: 'Medium',
-  size: 'ExtraLarge',
+  size: 'large',
   weight: 'Bolder',
   color: 'Accent'
 };
@@ -31352,11 +31352,6 @@ const makeDefaultBody = (customMessage1, customMessage2, commitMessage, changedF
     body.push(singleTextBlockCustom2);
   }
   const replacedBody = replaceBodyParameters(JSON.stringify(body), customMessage1, customMessage2, commitMessage, changedFiles);
-  console.log(replacedBody);
-  coreExports.group('default body', () => {
-    coreExports.info(`template: ${JSON.stringify(body, null, 2)}`);
-    coreExports.info(`replaced: ${JSON.stringify(replacedBody, null, 2)}`);
-  });
   return JSON.parse(replacedBody)
 };
 
@@ -31379,30 +31374,6 @@ const replaceBodyParameters = (target, customMessage1, customMessage2, commitMes
     coreExports.info(`customMessage2: ${customMessage2}`);
     coreExports.info(`context: ${JSON.stringify(githubExports.context, null, 2)}`);
   });
-
-  target = target.replace('{GITHUB_RUN_NUMBER}', githubExports.context.runNumber);
-  coreExports.info(target);
-  target = target.replace('{COMMIT_MESSAGE}', commitMessage);
-  coreExports.info(target);
-  target = target.replace('{CUSTOM_MESSAGE_1}', customMessage1);
-  coreExports.info(target);
-  target = target.replace('{GITHUB_REPOSITORY}', githubExports.context.payload.repository?.name);
-  coreExports.info(target);
-  target = target.replace('{BRANCH}', getBranch());
-  coreExports.info(target);
-  target = target.replace('{GITHUB_EVENT_NAME}', githubExports.context.eventName);
-  coreExports.info(target);
-  target = target.replace('{GITHUB_WORKFLOW}', githubExports.context.workflow);
-  coreExports.info(target);
-  target = target.replace('{GITHUB_ACTOR}', githubExports.context.actor);
-  coreExports.info(target);
-  target = target.replace('{GITHUB_WORKFLOW_SHA}', githubExports.context.sha);
-  coreExports.info(target);
-  target = target.replace('{CHANGED_FILES}', changedFiles);
-  coreExports.info(target);
-  target = target.replace('{CUSTOM_MESSAGE_2}', customMessage2);
-  coreExports.info(target);
-
   return target
     .replace('{GITHUB_RUN_NUMBER}', githubExports.context.runNumber)
     .replace('{COMMIT_MESSAGE}', commitMessage)

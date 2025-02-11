@@ -3,10 +3,10 @@ import { context } from '@actions/github'
 
 const titleBlock = {
   type: 'TextBlock',
-  text: 'No. {GITHUB_RUN_NUMBER} {COMMIT_MESSAGE}',
+  text: 'No.{GITHUB_RUN_NUMBER} {COMMIT_MESSAGE}',
   id: 'Title',
   spacing: 'Medium',
-  size: 'ExtraLarge',
+  size: 'large',
   weight: 'Bolder',
   color: 'Accent'
 }
@@ -132,11 +132,6 @@ export const makeDefaultBody = (customMessage1, customMessage2, commitMessage, c
     body.push(singleTextBlockCustom2)
   }
   const replacedBody = replaceBodyParameters(JSON.stringify(body), customMessage1, customMessage2, commitMessage, changedFiles)
-  console.log(replacedBody)
-  core.group('default body', () => {
-    core.info(`template: ${JSON.stringify(body, null, 2)}`)
-    core.info(`replaced: ${JSON.stringify(replacedBody, null, 2)}`)
-  })
   return JSON.parse(replacedBody)
 }
 
@@ -159,30 +154,6 @@ export const replaceBodyParameters = (target, customMessage1, customMessage2, co
     core.info(`customMessage2: ${customMessage2}`)
     core.info(`context: ${JSON.stringify(context, null, 2)}`)
   })
-
-  target = target.replace('{GITHUB_RUN_NUMBER}', context.runNumber)
-  core.info(target)
-  target = target.replace('{COMMIT_MESSAGE}', commitMessage)
-  core.info(target)
-  target = target.replace('{CUSTOM_MESSAGE_1}', customMessage1)
-  core.info(target)
-  target = target.replace('{GITHUB_REPOSITORY}', context.payload.repository?.name)
-  core.info(target)
-  target = target.replace('{BRANCH}', getBranch())
-  core.info(target)
-  target = target.replace('{GITHUB_EVENT_NAME}', context.eventName)
-  core.info(target)
-  target = target.replace('{GITHUB_WORKFLOW}', context.workflow)
-  core.info(target)
-  target = target.replace('{GITHUB_ACTOR}', context.actor)
-  core.info(target)
-  target = target.replace('{GITHUB_WORKFLOW_SHA}', context.sha)
-  core.info(target)
-  target = target.replace('{CHANGED_FILES}', changedFiles)
-  core.info(target)
-  target = target.replace('{CUSTOM_MESSAGE_2}', customMessage2)
-  core.info(target)
-
   return target
     .replace('{GITHUB_RUN_NUMBER}', context.runNumber)
     .replace('{COMMIT_MESSAGE}', commitMessage)
