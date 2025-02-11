@@ -49,11 +49,11 @@ describe('makeDefaultBody', () => {
         type: 'FactSet',
         facts: [
           {
-            title: 'Repository / Branch:',
+            title: 'Repository/Branch:',
             value: 'test-repo / main'
           },
           {
-            title: 'Workflow / Event / Actor:',
+            title: 'Workflow/Event/Actor:',
             value: 'CI / push / test-actor'
           },
           {
@@ -98,11 +98,11 @@ describe('makeDefaultBody', () => {
         type: 'FactSet',
         facts: [
           {
-            title: 'Repository / Branch:',
+            title: 'Repository/Branch:',
             value: 'test-repo / main'
           },
           {
-            title: 'Workflow / Event / Actor:',
+            title: 'Workflow/Event/Actor:',
             value: 'CI / push / test-actor'
           },
           {
