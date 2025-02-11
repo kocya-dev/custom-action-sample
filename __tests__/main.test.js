@@ -1,14 +1,14 @@
-import { jest } from '@jest/globals'
+import { vi } from 'vitest'
 import * as core from '../__fixtures__/core.js'
 import { context } from '../__fixtures__/context.js'
 import { getExecOutput } from '@actions/exec'
 
-jest.unstable_mockModule('@actions/core', () => core)
-jest.unstable_mockModule('@actions/github', () => {
+vi.mock('@actions/core', () => core)
+vi.mock('@actions/github', () => {
   return { context }
 })
-jest.unstable_mockModule('@actions/exec', () => {
-  return { getExecOutput: jest.fn().mockImplementation(() => ({ stdout: 'dummy output' })) }
+vi.mock('@actions/exec', () => {
+  return { getExecOutput: vi.fn().mockImplementation(() => ({ stdout: 'dummy output' })) }
 })
 context.runNumber = '123'
 context.payload = {
@@ -23,13 +23,13 @@ context.actor = 'test-actor'
 context.sha = 'abc123'
 context.serverUrl = 'https://github.com'
 
-global.fetch = jest.fn().mockImplementation(() => Promise.resolve({ ok: true, statusText: 'OK' }))
+global.fetch = vi.fn().mockImplementation(() => Promise.resolve({ ok: true, statusText: 'OK' }))
 
 const { run } = await import('../src/main.js')
 
 describe('Custom Action Tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('sends correct adaptive card payload when no template is provided', async () => {

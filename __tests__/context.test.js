@@ -1,6 +1,6 @@
-import { jest } from '@jest/globals'
+import { vi } from 'vitest'
 import { context } from '../__fixtures__/context.js'
-jest.unstable_mockModule('@actions/github', () => {
+vi.mock('@actions/github', () => {
   return { context }
 })
 
