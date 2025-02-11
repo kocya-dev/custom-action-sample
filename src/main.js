@@ -8,7 +8,6 @@ import { makeDefaultBody, makeAction, replaceBodyParameters } from './contents'
  * Retrieves and processes input values required for the custom action.
  *
  * @returns {Object} An object containing:
- *   - token {string}: The GitHub token used for authentication.
  *   - webhookUrl {string}: The URL of the webhook for notifications.
  *   - template {string}: The template string for formatting messages.
  *   - customMessage1 {string}: The first custom message.
@@ -18,7 +17,6 @@ import { makeDefaultBody, makeAction, replaceBodyParameters } from './contents'
  */
 const getInputs = () => {
   return {
-    token: core.getInput('token'),
     webhookUrl: core.getInput('webhook-url'),
     template: core.getInput('template'),
     customMessage1: core.getInput('message1'),
@@ -144,7 +142,6 @@ export async function run() {
 
     core.group('Result', () => core.info('Message sent successfully.'))
   } catch (error) {
-    core.group('Error', () => core.error(error))
     if (error instanceof Error) core.setFailed(error.message)
   }
 }

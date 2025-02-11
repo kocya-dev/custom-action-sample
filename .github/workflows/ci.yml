@@ -57,8 +57,26 @@ jobs:
         id: test-action
         uses: ./
         with:
-          token: GITHUB_TOKEN
           webhook-url: 'https://example.com'
+          message1: 'test1'
+          message2: 'test2'
+          action-titles: 'title1'
+          action-urls: 'https://www.yahoo.co.jp/'
+  test-action-template:
+    name: GitHub Actions Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Test Local Action (with template)
+        id: test-action
+        uses: ./
+        with:
+          webhook-url: 'https://example.com'
+          template: './.github/body-template.json'
           message1: 'test1'
           message2: 'test2'
           action-titles: 'title1'

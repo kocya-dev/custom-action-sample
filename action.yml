@@ -7,10 +7,6 @@ branding:
   color: red
 
 inputs:
-  token:
-    description: 'GitHub token (if not provided, uses GITHUB_TOKEN env variable)'
-    required: false
-    default: ''
   webhook-url:
     description: 'Webhook URL for sending the Adaptive Card'
     required: true

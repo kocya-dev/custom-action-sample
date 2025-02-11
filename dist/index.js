@@ -31386,7 +31386,6 @@ const replaceBodyParameters = (target, customMessage1, customMessage2, commitMes
  * Retrieves and processes input values required for the custom action.
  *
  * @returns {Object} An object containing:
- *   - token {string}: The GitHub token used for authentication.
  *   - webhookUrl {string}: The URL of the webhook for notifications.
  *   - template {string}: The template string for formatting messages.
  *   - customMessage1 {string}: The first custom message.
@@ -31396,7 +31395,6 @@ const replaceBodyParameters = (target, customMessage1, customMessage2, commitMes
  */
 const getInputs = () => {
   return {
-    token: coreExports.getInput('token'),
     webhookUrl: coreExports.getInput('webhook-url'),
     template: coreExports.getInput('template'),
     customMessage1: coreExports.getInput('message1'),
@@ -31522,7 +31520,6 @@ async function run() {
 
     coreExports.group('Result', () => coreExports.info('Message sent successfully.'));
   } catch (error) {
-    coreExports.group('Error', () => coreExports.error(error));
     if (error instanceof Error) coreExports.setFailed(error.message);
   }
 }
