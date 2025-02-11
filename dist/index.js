@@ -31393,6 +31393,7 @@ const replaceBodyParameters = (target, customMessage1, customMessage2, commitMes
     coreExports.info(`changedFiles: ${changedFiles}`);
     coreExports.info(`customMessage1: ${customMessage1}`);
     coreExports.info(`customMessage2: ${customMessage2}`);
+    coreExports.info(`context: ${JSON.stringify(githubExports.context, null, 2)}`);
   });
   return target
     .replace('{GITHUB_RUN_ID}', githubExports.context.runId)
@@ -31476,7 +31477,11 @@ const getBody = (inputs, commitMessage, changedFiles) => {
  * @returns {Object} An object representing the Adaptive Card payload with attachments.
  */
 const createAdapterCardPayload = (inputs, commitMessage, changedFiles) => {
-  coreExports.group('input parameter', () => coreExports.info(inputs, commitMessage, changedFiles));
+  coreExports.group('input parameters', () =>
+    coreExports.info(
+      `Action Titles: ${inputs.actionTitles.join(', ')}, Action URLs: ${inputs.actionUrls.join(', ')}, Commit Message: ${commitMessage}, Changed Files: ${changedFiles.join(', ')}`
+    )
+  );
 
   const bodyContent = getBody(inputs, commitMessage, changedFiles);
   const actionsContent = makeAction(inputs.actionTitles, inputs.actionUrls);
@@ -31521,7 +31526,7 @@ async function run() {
   try {
     // get inputs
     const inputs = getInputs();
-    coreExports.info(`inputs: ${inputs}`);
+    coreExports.info(`inputs: ${JSON.stringify(inputs, null, 2)}`);
 
     // Retrieve basic information from GitHub Actions environment variables
     const sha = githubExports.context.sha;
@@ -31535,7 +31540,6 @@ async function run() {
     coreExports.info(`Changed Files: ${changedFiles}`);
 
     // Create the body and actions of the Adaptive Card
-    coreExports.info(`inputs: ${inputs}`);
     const payload = createAdapterCardPayload(inputs, commitMessage, changedFiles);
     coreExports.info(JSON.stringify(payload, null, 2));
 

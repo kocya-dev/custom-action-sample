@@ -71,7 +71,11 @@ const getBody = (inputs, commitMessage, changedFiles) => {
  * @returns {Object} An object representing the Adaptive Card payload with attachments.
  */
 const createAdapterCardPayload = (inputs, commitMessage, changedFiles) => {
-  core.group('input parameter', () => core.info(inputs, commitMessage, changedFiles))
+  core.group('input parameters', () =>
+    core.info(
+      `Action Titles: ${inputs.actionTitles.join(', ')}, Action URLs: ${inputs.actionUrls.join(', ')}, Commit Message: ${commitMessage}, Changed Files: ${changedFiles.join(', ')}`
+    )
+  )
 
   const bodyContent = getBody(inputs, commitMessage, changedFiles)
   const actionsContent = makeAction(inputs.actionTitles, inputs.actionUrls)
@@ -116,7 +120,7 @@ export async function run() {
   try {
     // get inputs
     const inputs = getInputs()
-    core.info(`inputs: ${inputs}`)
+    core.info(`inputs: ${JSON.stringify(inputs, null, 2)}`)
 
     // Retrieve basic information from GitHub Actions environment variables
     const sha = context.sha
@@ -130,7 +134,6 @@ export async function run() {
     core.info(`Changed Files: ${changedFiles}`)
 
     // Create the body and actions of the Adaptive Card
-    core.info(`inputs: ${inputs}`)
     const payload = createAdapterCardPayload(inputs, commitMessage, changedFiles)
     core.info(JSON.stringify(payload, null, 2))
 

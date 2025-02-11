@@ -164,6 +164,7 @@ export const replaceBodyParameters = (target, customMessage1, customMessage2, co
     core.info(`changedFiles: ${changedFiles}`)
     core.info(`customMessage1: ${customMessage1}`)
     core.info(`customMessage2: ${customMessage2}`)
+    core.info(`context: ${JSON.stringify(context, null, 2)}`)
   })
   return target
     .replace('{GITHUB_RUN_ID}', context.runId)
