@@ -117,8 +117,8 @@ export async function run() {
     // Retrieve basic information from GitHub Actions environment variables
     const sha = context.sha
     const execOptions = {
-      ignoreReturnCode: true,
-      silent: !core.isDebug()
+      ignoreReturnCode: true
+      //silent: !core.isDebug()
     }
     // Get the latest commit message
     const { stdout } = await exec.getExecOutput('git', ['show', '-s', '--format=%B', sha], execOptions)
