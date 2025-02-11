@@ -124,7 +124,7 @@ describe('makeAction', () => {
   beforeEach(() => {
     // Setup context values that are used by getWorkflowUrl
     context.serverUrl = 'https://github.com'
-    context.payload = { repository: { name: 'test-repo' } }
+    context.payload = { repository: { name: 'test-repo', html_url: 'https://github.com/test-repo' } }
     context.runNumber = '123'
     context.runId = '123456'
     // Other context values, though not used by makeAction directly
