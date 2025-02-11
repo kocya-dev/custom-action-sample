@@ -5,6 +5,7 @@ vi.mock('@actions/github', () => {
 })
 
 context.runNumber = '123'
+context.runId = '123456'
 context.payload = {
   repository: {
     name: 'test-repo'
@@ -125,6 +126,7 @@ describe('makeAction', () => {
     context.serverUrl = 'https://github.com'
     context.payload = { repository: { name: 'test-repo' } }
     context.runNumber = '123'
+    context.runId = '123456'
     // Other context values, though not used by makeAction directly
     context.ref = 'refs/heads/main'
     context.eventName = 'push'
@@ -139,7 +141,7 @@ describe('makeAction', () => {
     expect(actions[0]).toEqual({
       type: 'Action.OpenUrl',
       title: 'View Workflow',
-      url: 'https://github.com/test-repo/actions/runs/123'
+      url: 'https://github.com/test-repo/actions/runs/123456'
     })
   })
 

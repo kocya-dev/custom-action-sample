@@ -63,7 +63,7 @@ const getStatus = () => {
  * @returns {string} The URL of the current workflow run.
  */
 const getWorkflowUrl = () => {
-  return `${context.serverUrl}/${context.payload.repository?.name}/actions/runs/${context.runNumber}`
+  return `${context.serverUrl}/${context.payload.repository?.name}/actions/runs/${context.runId}`
 }
 
 /**

@@ -31285,7 +31285,7 @@ const factBlock = {
  * @returns {string} The URL of the current workflow run.
  */
 const getWorkflowUrl = () => {
-  return `${githubExports.context.serverUrl}/${githubExports.context.payload.repository?.name}/actions/runs/${githubExports.context.runNumber}`
+  return `${githubExports.context.serverUrl}/${githubExports.context.payload.repository?.name}/actions/runs/${githubExports.context.runId}`
 };
 
 /**
