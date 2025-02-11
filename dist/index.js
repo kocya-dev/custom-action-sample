@@ -31260,12 +31260,12 @@ const factBlock = {
   type: 'FactSet',
   facts: [
     {
-      title: 'Repository-Branch:',
-      value: '{GITHUB_REPOSITORY} - {BRANCH}'
+      title: 'Repository / Branch:',
+      value: '{GITHUB_REPOSITORY} / {BRANCH}'
     },
     {
-      title: 'Event-Workflow-Actor:',
-      value: '{GITHUB_EVENT_NAME} - {GITHUB_WORKFLOW} - {GITHUB_ACTOR}'
+      title: 'Workflow / Event / Actor:',
+      value: '{GITHUB_WORKFLOW} / {GITHUB_EVENT_NAME} / {GITHUB_ACTOR}'
     },
     {
       title: 'SHA-1:',
