@@ -31369,6 +31369,7 @@ const makeDefaultBody = (customMessage1, customMessage2, commitMessage, changedF
     body.push(singleTextBlockCustom2);
   }
   const replacedBody = replaceBodyParameters(JSON.stringify(body), customMessage1, customMessage2, commitMessage, changedFiles);
+  console.log(replacedBody);
   coreExports.group('default body', () => {
     coreExports.info(`template: ${JSON.stringify(body, null, 2)}`);
     coreExports.info(`replaced: ${JSON.stringify(replacedBody, null, 2)}`);
@@ -31479,7 +31480,7 @@ const getBody = (inputs, commitMessage, changedFiles) => {
 const createAdapterCardPayload = (inputs, commitMessage, changedFiles) => {
   coreExports.group('input parameters', () =>
     coreExports.info(
-      `Action Titles: ${inputs.actionTitles.join(', ')}, Action URLs: ${inputs.actionUrls.join(', ')}, Commit Message: ${commitMessage}, Changed Files: ${changedFiles.join(', ')}`
+      `Action Titles: ${inputs.actionTitles.join(', ')}, Action URLs: ${inputs.actionUrls.join(', ')}, Commit Message: ${commitMessage}, Changed Files: ${changedFiles}`
     )
   );
 

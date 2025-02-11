@@ -73,7 +73,7 @@ const getBody = (inputs, commitMessage, changedFiles) => {
 const createAdapterCardPayload = (inputs, commitMessage, changedFiles) => {
   core.group('input parameters', () =>
     core.info(
-      `Action Titles: ${inputs.actionTitles.join(', ')}, Action URLs: ${inputs.actionUrls.join(', ')}, Commit Message: ${commitMessage}, Changed Files: ${changedFiles.join(', ')}`
+      `Action Titles: ${inputs.actionTitles.join(', ')}, Action URLs: ${inputs.actionUrls.join(', ')}, Commit Message: ${commitMessage}, Changed Files: ${changedFiles}`
     )
   )
 
