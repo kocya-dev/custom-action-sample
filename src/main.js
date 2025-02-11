@@ -21,8 +21,8 @@ const getInputs = () => {
     template: core.getInput('template'),
     customMessage1: core.getInput('message1'),
     customMessage2: core.getInput('message2'),
-    actionTitles: core.getInput('action-titles').split('\n'),
-    actionUrls: core.getInput('action-urls').split('\n')
+    actionTitles: core.getInput('action-titles')?.split('\n') || [],
+    actionUrls: core.getInput('action-urls')?.split('\n') || []
   }
 }
 /**

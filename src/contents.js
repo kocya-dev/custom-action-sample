@@ -85,8 +85,7 @@ const getBranch = () => {
 export const makeAction = (titles, urls) => {
   const actions = []
   if (titles.length != urls.length) {
-    core.error('Action titles and URLs must have the same length.')
-    throw new Error('Action titles and URLs must have the same length.')
+    throw new Error(`Action titles and URLs must have the same length. Titles: ${titles.length}, URLs: ${urls.length}`)
   }
 
   // If no action parameters are provided, return the default action to view the workflow.
@@ -101,7 +100,6 @@ export const makeAction = (titles, urls) => {
   // Create an action for each parameter provided.
   for (let i = 0; i < titles.length; i++) {
     if (!titles[i] || !urls[i]) {
-      core.error('Action titles and URLs must have the same length.')
       throw new Error('Action parameters must contain a title and URL.')
     }
     actions.push({
