@@ -31368,10 +31368,12 @@ const makeDefaultBody = (customMessage1, customMessage2, commitMessage, changedF
   if (customMessage2) {
     body.push(singleTextBlockCustom2);
   }
-  coreExports.group('default template', () => {
-    coreExports.info(JSON.stringify(body, null, 2));
+  const replacedBody = replaceBodyParameters(JSON.stringify(body), customMessage1, customMessage2, commitMessage, changedFiles);
+  coreExports.group('default body', () => {
+    coreExports.info(`template: ${JSON.stringify(body, null, 2)}`);
+    coreExports.info(`replaced: ${JSON.stringify(replacedBody, null, 2)}`);
   });
-  return JSON.parse(replaceBodyParameters(JSON.stringify(body), customMessage1, customMessage2, commitMessage, changedFiles))
+  return JSON.parse(replacedBody)
 };
 
 /**

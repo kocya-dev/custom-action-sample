@@ -139,10 +139,12 @@ export const makeDefaultBody = (customMessage1, customMessage2, commitMessage, c
   if (customMessage2) {
     body.push(singleTextBlockCustom2)
   }
-  core.group('default template', () => {
-    core.info(JSON.stringify(body, null, 2))
+  const replacedBody = replaceBodyParameters(JSON.stringify(body), customMessage1, customMessage2, commitMessage, changedFiles)
+  core.group('default body', () => {
+    core.info(`template: ${JSON.stringify(body, null, 2)}`)
+    core.info(`replaced: ${JSON.stringify(replacedBody, null, 2)}`)
   })
-  return JSON.parse(replaceBodyParameters(JSON.stringify(body), customMessage1, customMessage2, commitMessage, changedFiles))
+  return JSON.parse(replacedBody)
 }
 
 /**
