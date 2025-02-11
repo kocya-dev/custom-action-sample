@@ -94,8 +94,8 @@ jobs:
           message1: 'test1'
           message2: 'test2'
           action-titles: |
-            'title1'
-            'title2'
+            title1
+            title2
           action-urls: |
-            'https://www.yahoo.co.jp/'
-            'https://www.example.com/'
+            https://www.yahoo.co.jp/
+            https://www.example.com/
