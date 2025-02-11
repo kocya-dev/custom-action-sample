@@ -31396,6 +31396,32 @@ const replaceBodyParameters = (target, customMessage1, customMessage2, commitMes
     coreExports.info(`customMessage2: ${customMessage2}`);
     coreExports.info(`context: ${JSON.stringify(githubExports.context, null, 2)}`);
   });
+
+  target = target.replace('{GITHUB_RUN_ID}', githubExports.context.runId);
+  coreExports.info(target);
+  target = target.replace('{COMMIT_MESSAGE}', commitMessage);
+  coreExports.info(target);
+  target = target.replace('{JOB_STATUS}', getStatus());
+  coreExports.info(target);
+  target = target.replace('{CUSTOM_MESSAGE_1}', customMessage1);
+  coreExports.info(target);
+  target = target.replace('{GITHUB_REPOSITORY}', githubExports.context.payload.repository?.name);
+  coreExports.info(target);
+  target = target.replace('{BRANCH}', getBranch());
+  coreExports.info(target);
+  target = target.replace('{GITHUB_EVENT_NAME}', githubExports.context.eventName);
+  coreExports.info(target);
+  target = target.replace('{GITHUB_WORKFLOW}', githubExports.context.workflow);
+  coreExports.info(target);
+  target = target.replace('{GITHUB_ACTOR}', githubExports.context.actor);
+  coreExports.info(target);
+  target = target.replace('{GITHUB_WORKFLOW_SHA}', githubExports.context.sha);
+  coreExports.info(target);
+  target = target.replace('{CHANGED_FILES}', changedFiles);
+  coreExports.info(target);
+  target = target.replace('{CUSTOM_MESSAGE_2}', customMessage2);
+  coreExports.info(target);
+
   return target
     .replace('{GITHUB_RUN_ID}', githubExports.context.runId)
     .replace('{COMMIT_MESSAGE}', commitMessage)
