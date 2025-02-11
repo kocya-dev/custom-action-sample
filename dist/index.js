@@ -31232,19 +31232,12 @@ var githubExports = requireGithub();
 
 const titleBlock = {
   type: 'TextBlock',
-  text: 'No. {GITHUB_RUN_ID} {COMMIT_MESSAGE}',
+  text: 'No. {GITHUB_RUN_NUMBER} {COMMIT_MESSAGE}',
   id: 'Title',
   spacing: 'Medium',
   size: 'ExtraLarge',
   weight: 'Bolder',
   color: 'Accent'
-};
-
-const jobStatusBlock = {
-  type: 'TextBlock',
-  text: '{JOB_STATUS}',
-  separator: true,
-  wrap: true
 };
 
 const singleTextBlockCustom1 = {
@@ -31285,21 +31278,12 @@ const factBlock = {
 };
 
 /**
- * Retrieves the status from the job context.
- *
- * @returns {string} The status of the job.
- */
-const getStatus = () => {
-  return JSON.parse(githubExports.context.job).status
-};
-
-/**
  * Constructs the URL for the current GitHub Actions workflow run.
  *
  * @returns {string} The URL of the current workflow run.
  */
 const getWorkflowUrl = () => {
-  return `${githubExports.context.serverUrl}/${githubExports.context.payload.repository?.name}/actions/runs/${githubExports.context.runId}`
+  return `${githubExports.context.serverUrl}/${githubExports.context.payload.repository?.name}/actions/runs/${githubExports.context.runNumber}`
 };
 
 /**
@@ -31360,7 +31344,6 @@ const makeAction = (titles, urls) => {
 const makeDefaultBody = (customMessage1, customMessage2, commitMessage, changedFiles) => {
   const body = [];
   body.push(titleBlock);
-  body.push(jobStatusBlock);
   if (customMessage1) {
     body.push(singleTextBlockCustom1);
   }
@@ -31397,11 +31380,9 @@ const replaceBodyParameters = (target, customMessage1, customMessage2, commitMes
     coreExports.info(`context: ${JSON.stringify(githubExports.context, null, 2)}`);
   });
 
-  target = target.replace('{GITHUB_RUN_ID}', githubExports.context.runId);
+  target = target.replace('{GITHUB_RUN_NUMBER}', githubExports.context.runNumber);
   coreExports.info(target);
   target = target.replace('{COMMIT_MESSAGE}', commitMessage);
-  coreExports.info(target);
-  target = target.replace('{JOB_STATUS}', getStatus());
   coreExports.info(target);
   target = target.replace('{CUSTOM_MESSAGE_1}', customMessage1);
   coreExports.info(target);
@@ -31423,9 +31404,8 @@ const replaceBodyParameters = (target, customMessage1, customMessage2, commitMes
   coreExports.info(target);
 
   return target
-    .replace('{GITHUB_RUN_ID}', githubExports.context.runId)
+    .replace('{GITHUB_RUN_NUMBER}', githubExports.context.runNumber)
     .replace('{COMMIT_MESSAGE}', commitMessage)
-    .replace('{JOB_STATUS}', getStatus())
     .replace('{CUSTOM_MESSAGE_1}', customMessage1)
     .replace('{GITHUB_REPOSITORY}', githubExports.context.payload.repository?.name)
     .replace('{BRANCH}', getBranch())

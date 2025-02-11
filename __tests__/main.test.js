@@ -9,7 +9,7 @@ jest.unstable_mockModule('@actions/github', () => {
 jest.unstable_mockModule('child_process', () => ({
   execSync: jest.fn().mockImplementation(() => 'dummy output')
 }))
-context.runId = '123'
+context.runNumber = '123'
 context.payload = {
   repository: {
     name: 'test-repo'
@@ -20,7 +20,6 @@ context.eventName = 'push'
 context.workflow = 'CI'
 context.actor = 'test-actor'
 context.sha = 'abc123'
-context.job = JSON.stringify({ status: 'success' })
 context.serverUrl = 'https://github.com'
 
 global.fetch = jest.fn().mockImplementation(() => Promise.resolve({ ok: true, statusText: 'OK' }))
@@ -80,7 +79,6 @@ describe('Custom Action Tests', () => {
     const expectedTemplate = [
       { type: 'TextBlock', text: '123', wrap: true },
       { type: 'TextBlock', text: 'dummy output', wrap: true },
-      { type: 'TextBlock', text: 'success', wrap: true },
       { type: 'TextBlock', text: 'dummyMessage1', wrap: true },
       { type: 'TextBlock', text: 'test-repo', wrap: true },
       { type: 'TextBlock', text: 'main', wrap: true },

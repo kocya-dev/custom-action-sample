@@ -1,17 +1,12 @@
 [
   {
     "type": "TextBlock",
-    "text": "{GITHUB_RUN_ID}",
+    "text": "{GITHUB_RUN_NUMBER}",
     "wrap": true
   },
   {
     "type": "TextBlock",
     "text": "{COMMIT_MESSAGE}",
-    "wrap": true
-  },
-  {
-    "type": "TextBlock",
-    "text": "{JOB_STATUS}",
     "wrap": true
   },
   {

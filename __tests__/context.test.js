@@ -4,7 +4,7 @@ jest.unstable_mockModule('@actions/github', () => {
   return { context }
 })
 
-context.runId = '123'
+context.runNumber = '123'
 context.payload = {
   repository: {
     name: 'test-repo'
@@ -15,7 +15,6 @@ context.eventName = 'push'
 context.workflow = 'CI'
 context.actor = 'test-actor'
 context.sha = 'abc123'
-context.job = JSON.stringify({ status: 'success' })
 context.serverUrl = 'https://github.com'
 
 const { makeDefaultBody, makeAction } = await import('../src/contents.js')
@@ -38,12 +37,6 @@ describe('makeDefaultBody', () => {
         size: 'ExtraLarge',
         weight: 'Bolder',
         color: 'Accent'
-      },
-      {
-        type: 'TextBlock',
-        text: 'success',
-        separator: true,
-        wrap: true
       },
       {
         type: 'TextBlock',
@@ -101,12 +94,6 @@ describe('makeDefaultBody', () => {
         color: 'Accent'
       },
       {
-        type: 'TextBlock',
-        text: 'success',
-        separator: true,
-        wrap: true
-      },
-      {
         type: 'FactSet',
         facts: [
           {
@@ -137,14 +124,13 @@ describe('makeAction', () => {
     // Setup context values that are used by getWorkflowUrl
     context.serverUrl = 'https://github.com'
     context.payload = { repository: { name: 'test-repo' } }
-    context.runId = '123'
+    context.runNumber = '123'
     // Other context values, though not used by makeAction directly
     context.ref = 'refs/heads/main'
     context.eventName = 'push'
     context.workflow = 'CI'
     context.actor = 'test-actor'
     context.sha = 'abc123'
-    context.job = JSON.stringify({ status: 'success' })
   })
 
   test('returns default action when titles and urls are empty', () => {

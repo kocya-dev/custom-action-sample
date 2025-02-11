@@ -3,19 +3,12 @@ import { context } from '@actions/github'
 
 const titleBlock = {
   type: 'TextBlock',
-  text: 'No. {GITHUB_RUN_ID} {COMMIT_MESSAGE}',
+  text: 'No. {GITHUB_RUN_NUMBER} {COMMIT_MESSAGE}',
   id: 'Title',
   spacing: 'Medium',
   size: 'ExtraLarge',
   weight: 'Bolder',
   color: 'Accent'
-}
-
-const jobStatusBlock = {
-  type: 'TextBlock',
-  text: '{JOB_STATUS}',
-  separator: true,
-  wrap: true
 }
 
 const singleTextBlockCustom1 = {
@@ -70,7 +63,7 @@ const getStatus = () => {
  * @returns {string} The URL of the current workflow run.
  */
 const getWorkflowUrl = () => {
-  return `${context.serverUrl}/${context.payload.repository?.name}/actions/runs/${context.runId}`
+  return `${context.serverUrl}/${context.payload.repository?.name}/actions/runs/${context.runNumber}`
 }
 
 /**
@@ -131,7 +124,6 @@ export const makeAction = (titles, urls) => {
 export const makeDefaultBody = (customMessage1, customMessage2, commitMessage, changedFiles) => {
   const body = []
   body.push(titleBlock)
-  body.push(jobStatusBlock)
   if (customMessage1) {
     body.push(singleTextBlockCustom1)
   }
@@ -168,11 +160,9 @@ export const replaceBodyParameters = (target, customMessage1, customMessage2, co
     core.info(`context: ${JSON.stringify(context, null, 2)}`)
   })
 
-  target = target.replace('{GITHUB_RUN_ID}', context.runId)
+  target = target.replace('{GITHUB_RUN_NUMBER}', context.runNumber)
   core.info(target)
   target = target.replace('{COMMIT_MESSAGE}', commitMessage)
-  core.info(target)
-  target = target.replace('{JOB_STATUS}', getStatus())
   core.info(target)
   target = target.replace('{CUSTOM_MESSAGE_1}', customMessage1)
   core.info(target)
@@ -194,9 +184,8 @@ export const replaceBodyParameters = (target, customMessage1, customMessage2, co
   core.info(target)
 
   return target
-    .replace('{GITHUB_RUN_ID}', context.runId)
+    .replace('{GITHUB_RUN_NUMBER}', context.runNumber)
     .replace('{COMMIT_MESSAGE}', commitMessage)
-    .replace('{JOB_STATUS}', getStatus())
     .replace('{CUSTOM_MESSAGE_1}', customMessage1)
     .replace('{GITHUB_REPOSITORY}', context.payload.repository?.name)
     .replace('{BRANCH}', getBranch())
