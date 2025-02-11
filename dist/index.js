@@ -31269,7 +31269,7 @@ const factBlock = {
     },
     {
       title: 'SHA-1:',
-      value: '{GITHUB_WORKFLOW_SHA}'
+      value: '{GITHUB_SHA}'
     },
     {
       title: 'Changed files:',
@@ -31377,7 +31377,7 @@ const replaceBodyParameters = (target, customMessage1, customMessage2, commitMes
     .replace('{GITHUB_EVENT_NAME}', githubExports.context.eventName)
     .replace('{GITHUB_WORKFLOW}', githubExports.context.workflow)
     .replace('{GITHUB_ACTOR}', githubExports.context.actor)
-    .replace('{GITHUB_WORKFLOW_SHA}', githubExports.context.sha)
+    .replace('{GITHUB_SHA}', githubExports.context.sha)
     .replace('{CHANGED_FILES}', changedFiles)
     .replace('{CUSTOM_MESSAGE_2}', customMessage2)
 };

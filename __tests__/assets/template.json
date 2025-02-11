@@ -41,7 +41,7 @@
   },
   {
     "type": "TextBlock",
-    "text": "{GITHUB_WORKFLOW_SHA}",
+    "text": "{GITHUB_SHA}",
     "wrap": true
   },
   {
