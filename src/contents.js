@@ -89,7 +89,7 @@ export const makeAction = (titles, urls) => {
   }
 
   // If no action parameters are provided, return the default action to view the workflow.
-  if (titles.length == 0 || urls.length == 0) {
+  if ((titles.length == 0 && urls.length == 0) || (titles.length == 1 && urls.length == 1 && !titles[0] && !urls[0])) {
     actions.push({
       type: 'Action.OpenUrl',
       title: 'View Workflow',
