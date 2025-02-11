@@ -62,9 +62,9 @@ describe('makeDefaultBody', () => {
           },
           {
             title: 'Changed files:',
-            value: `file1.js
+            value: `\`file1.js\`
 
-file2.js`
+\`file2.js\``
           }
         ],
         id: 'acFactSet'
@@ -113,9 +113,9 @@ file2.js`
           },
           {
             title: 'Changed files:',
-            value: `file1.js
+            value: `\`file1.js\`
 
-file2.js`
+\`file2.js\``
           }
         ],
         id: 'acFactSet'

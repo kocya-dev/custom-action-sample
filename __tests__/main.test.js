@@ -87,7 +87,7 @@ describe('Custom Action Tests', () => {
       { type: 'TextBlock', text: 'CI', wrap: true },
       { type: 'TextBlock', text: 'test-actor', wrap: true },
       { type: 'TextBlock', text: 'abc123', wrap: true },
-      { type: 'TextBlock', text: 'dummy output', wrap: true },
+      { type: 'TextBlock', text: '\`dummy output\`', wrap: true },
       { type: 'TextBlock', text: 'dummyMessage2', wrap: true }
     ]
     const expectedActions = [

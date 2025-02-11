@@ -130,7 +130,9 @@ export const makeDefaultBody = (customMessage1, customMessage2, commitMessage, c
     body.push(singleTextBlockCustom2)
   }
   const replacedBody = replaceBodyParameters(JSON.stringify(body), customMessage1, customMessage2, commitMessage, changedFiles)
-  return JSON.parse(replacedBody)
+  console.log(replacedBody)
+  const parsedBody = JSON.parse(replacedBody)
+  return parsedBody
 }
 
 /**
@@ -144,7 +146,7 @@ export const makeDefaultBody = (customMessage1, customMessage2, commitMessage, c
  * @returns {string} - The target string with all placeholders replaced by their corresponding values.
  */
 export const replaceBodyParameters = (target, customMessage1, customMessage2, commitMessage, changedFiles) => {
-  const changedFilesString = Array.isArray(changedFiles) ? changedFiles.join('\\n\\n') : ''
+  const changedFilesString = Array.isArray(changedFiles) ? changedFiles.map((file) => `\`${file}\``).join('\\n\\n') : ''
   return target
     .replace('{GITHUB_RUN_NUMBER}', context.runNumber)
     .replace('{COMMIT_MESSAGE}', commitMessage)
