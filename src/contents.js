@@ -140,10 +140,11 @@ export const makeDefaultBody = (customMessage1, customMessage2, commitMessage, c
  * @param {string} customMessage1 - Custom message to replace the {CUSTOM_MESSAGE_1} placeholder.
  * @param {string} customMessage2 - Custom message to replace the {CUSTOM_MESSAGE_2} placeholder.
  * @param {string} commitMessage - Commit message to replace the {COMMIT_MESSAGE} placeholder.
- * @param {string} changedFiles - List of changed files to replace the {CHANGED_FILES} placeholder.
+ * @param {Array} changedFiles - The list of changed files to include in the body.
  * @returns {string} - The target string with all placeholders replaced by their corresponding values.
  */
 export const replaceBodyParameters = (target, customMessage1, customMessage2, commitMessage, changedFiles) => {
+  const changedFilesString = Array.isArray(changedFiles) ? changedFiles.join('\\n\\n') : ''
   return target
     .replace('{GITHUB_RUN_NUMBER}', context.runNumber)
     .replace('{COMMIT_MESSAGE}', commitMessage)
@@ -154,6 +155,6 @@ export const replaceBodyParameters = (target, customMessage1, customMessage2, co
     .replace('{GITHUB_WORKFLOW}', context.workflow)
     .replace('{GITHUB_ACTOR}', context.actor)
     .replace('{GITHUB_SHA}', context.sha)
-    .replace('{CHANGED_FILES}', changedFiles)
+    .replace('{CHANGED_FILES}', changedFilesString)
     .replace('{CUSTOM_MESSAGE_2}', customMessage2)
 }

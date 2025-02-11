@@ -25,7 +25,7 @@ describe('makeDefaultBody', () => {
     const customMessage1 = 'Custom Message 1'
     const customMessage2 = 'Custom Message 2'
     const commitMessage = 'Initial commit'
-    const changedFiles = 'file1.js, file2.js'
+    const changedFiles = ['file1.js', 'file2.js']
 
     const body = makeDefaultBody(customMessage1, customMessage2, commitMessage, changedFiles)
 
@@ -62,7 +62,9 @@ describe('makeDefaultBody', () => {
           },
           {
             title: 'Changed files:',
-            value: 'file1.js, file2.js'
+            value: `file1.js
+
+file2.js`
           }
         ],
         id: 'acFactSet'
@@ -80,7 +82,7 @@ describe('makeDefaultBody', () => {
     const customMessage1 = ''
     const customMessage2 = ''
     const commitMessage = 'Initial commit'
-    const changedFiles = 'file1.js, file2.js'
+    const changedFiles = ['file1.js', 'file2.js']
 
     const body = makeDefaultBody(customMessage1, customMessage2, commitMessage, changedFiles)
 
@@ -111,7 +113,9 @@ describe('makeDefaultBody', () => {
           },
           {
             title: 'Changed files:',
-            value: 'file1.js, file2.js'
+            value: `file1.js
+
+file2.js`
           }
         ],
         id: 'acFactSet'
