@@ -31234,7 +31234,7 @@ var execExports = requireExec();
 
 const titleBlock = {
   type: 'TextBlock',
-  text: 'No.{GITHUB_RUN_NUMBER} {COMMIT_MESSAGE}',
+  text: '#{GITHUB_RUN_NUMBER} {COMMIT_MESSAGE}',
   id: 'Title',
   spacing: 'Medium',
   size: 'large',
