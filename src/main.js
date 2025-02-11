@@ -22,7 +22,8 @@ const getInputs = () => {
     customMessage1: core.getInput('message1'),
     customMessage2: core.getInput('message2'),
     actionTitles: core.getInput('action-titles')?.split('\n') || [],
-    actionUrls: core.getInput('action-urls')?.split('\n') || []
+    actionUrls: core.getInput('action-urls')?.split('\n') || [],
+    visibleChangedFiles: core.getInput('visible-changed-files')
   }
 }
 /**
@@ -52,7 +53,8 @@ const getBody = (inputs, commitMessage, changedFiles) => {
       throw new Error(`Failed to load template from ${inputs.template}: ${err.message}`)
     }
   } else {
-    const defaultBody = makeDefaultBody(inputs.customMessage1, inputs.customMessage2, commitMessage, changedFiles)
+    const useChangedFiles = inputs.visibleChangedFiles == 'true' ? changedFiles : undefined
+    const defaultBody = makeDefaultBody(inputs.customMessage1, inputs.customMessage2, commitMessage, useChangedFiles)
     core.group('Default body', () => core.info(JSON.stringify(defaultBody, null, 2)))
     return defaultBody
   }

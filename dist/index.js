@@ -31270,13 +31270,14 @@ const factBlock = {
     {
       title: 'SHA-1:',
       value: '{GITHUB_SHA}'
-    },
-    {
-      title: 'Changed files:',
-      value: '{CHANGED_FILES}'
     }
   ],
   id: 'acFactSet'
+};
+
+const factBlockChangedFiles = {
+  title: 'Changed files:',
+  value: '{CHANGED_FILES}'
 };
 
 /**
@@ -31347,12 +31348,15 @@ const makeDefaultBody = (customMessage1, customMessage2, commitMessage, changedF
   if (customMessage1) {
     body.push(singleTextBlockCustom1);
   }
-  body.push(factBlock);
+  const fact = JSON.parse(JSON.stringify(factBlock));
+  if (changedFiles) {
+    fact.facts.push(factBlockChangedFiles);
+  }
+  body.push(fact);
   if (customMessage2) {
     body.push(singleTextBlockCustom2);
   }
   const replacedBody = replaceBodyParameters(JSON.stringify(body), customMessage1, customMessage2, commitMessage, changedFiles);
-  console.log(replacedBody);
   const parsedBody = JSON.parse(replacedBody);
   return parsedBody
 };
@@ -31401,7 +31405,8 @@ const getInputs = () => {
     customMessage1: coreExports.getInput('message1'),
     customMessage2: coreExports.getInput('message2'),
     actionTitles: coreExports.getInput('action-titles')?.split('\n') || [],
-    actionUrls: coreExports.getInput('action-urls')?.split('\n') || []
+    actionUrls: coreExports.getInput('action-urls')?.split('\n') || [],
+    visibleChangedFiles: coreExports.getInput('visible-changed-files')
   }
 };
 /**
@@ -31431,7 +31436,8 @@ const getBody = (inputs, commitMessage, changedFiles) => {
       throw new Error(`Failed to load template from ${inputs.template}: ${err.message}`)
     }
   } else {
-    const defaultBody = makeDefaultBody(inputs.customMessage1, inputs.customMessage2, commitMessage, changedFiles);
+    const useChangedFiles = inputs.visibleChangedFiles == 'true' ? changedFiles : undefined;
+    const defaultBody = makeDefaultBody(inputs.customMessage1, inputs.customMessage2, commitMessage, useChangedFiles);
     coreExports.group('Default body', () => coreExports.info(JSON.stringify(defaultBody, null, 2)));
     return defaultBody
   }

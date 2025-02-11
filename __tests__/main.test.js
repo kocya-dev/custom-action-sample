@@ -41,6 +41,38 @@ describe('Custom Action Tests', () => {
       if (name === 'message2') return 'dummyMessage2'
       if (name === 'action-titles') return 'Title1\nTitle2'
       if (name === 'action-urls') return 'https://url1\nhttps://url2'
+      if (name === 'visible-changed-files') return 'false'
+      return ''
+    })
+
+    await run()
+
+    // Validate that fetch was called with the expected parameters.
+    expect(fetch).toHaveBeenCalledWith(
+      'https://dummy.url',
+      expect.objectContaining({
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        // Due to processing in run, the body is created by createAdapterCardPayload.
+        // We validate that it has an attachments array with the adaptive card payload.
+        body: expect.objectContaining({
+          attachments: expect.any(Array)
+        })
+      })
+    )
+  })
+  it('sends correct adaptive card payload when no template is provided and visible changed files', async () => {
+    core.getInput.mockImplementation((name) => {
+      if (name === 'token') return 'dummyToken'
+      if (name === 'webhook-url') return 'https://dummy.url'
+      if (name === 'template') return ''
+      if (name === 'message1') return 'dummyMessage1'
+      if (name === 'message2') return 'dummyMessage2'
+      if (name === 'action-titles') return 'Title1\nTitle2'
+      if (name === 'action-urls') return 'https://url1\nhttps://url2'
+      if (name === 'visible-changed-files') return 'true'
       return ''
     })
 
@@ -72,6 +104,7 @@ describe('Custom Action Tests', () => {
       if (name === 'message2') return 'dummyMessage2'
       if (name === 'action-titles') return 'Title1'
       if (name === 'action-urls') return 'https://url1'
+      if (name === 'visible-changed-files') return 'false'
       return ''
     })
 
@@ -140,6 +173,7 @@ describe('Custom Action Tests', () => {
       if (name === 'message2') return 'dummyMessage2'
       if (name === 'action-titles') return ''
       if (name === 'action-urls') return ''
+      if (name === 'visible-changed-files') return 'false'
       return ''
     })
     await run()
@@ -157,6 +191,7 @@ describe('Custom Action Tests', () => {
       if (name === 'message2') return 'dummyMessage2'
       if (name === 'action-titles') return 'Title1\nTitle2'
       if (name === 'action-urls') return 'https://url1\nhttps://url2'
+      if (name === 'visible-changed-files') return 'false'
       return ''
     })
     await run()

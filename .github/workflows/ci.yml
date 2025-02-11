@@ -52,7 +52,8 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
-
+        with:
+          fetch-depth: 0
       - name: Test Local Action
         id: test-action
         uses: ./
@@ -62,6 +63,7 @@ jobs:
           message2: 'test2'
           action-titles: 'title1'
           action-urls: 'https://www.yahoo.co.jp/'
+          visible-changed-files: true
   test-action-min:
     name: GitHub Actions Test Min
     runs-on: ubuntu-latest
@@ -85,7 +87,8 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
-
+        with:
+          fetch-depth: 0
       - name: Test Local Action (with template)
         id: test-action
         uses: ./

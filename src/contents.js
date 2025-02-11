@@ -39,13 +39,14 @@ const factBlock = {
     {
       title: 'SHA-1:',
       value: '{GITHUB_SHA}'
-    },
-    {
-      title: 'Changed files:',
-      value: '{CHANGED_FILES}'
     }
   ],
   id: 'acFactSet'
+}
+
+const factBlockChangedFiles = {
+  title: 'Changed files:',
+  value: '{CHANGED_FILES}'
 }
 
 /**
@@ -125,12 +126,15 @@ export const makeDefaultBody = (customMessage1, customMessage2, commitMessage, c
   if (customMessage1) {
     body.push(singleTextBlockCustom1)
   }
-  body.push(factBlock)
+  const fact = JSON.parse(JSON.stringify(factBlock))
+  if (changedFiles) {
+    fact.facts.push(factBlockChangedFiles)
+  }
+  body.push(fact)
   if (customMessage2) {
     body.push(singleTextBlockCustom2)
   }
   const replacedBody = replaceBodyParameters(JSON.stringify(body), customMessage1, customMessage2, commitMessage, changedFiles)
-  console.log(replacedBody)
   const parsedBody = JSON.parse(replacedBody)
   return parsedBody
 }
