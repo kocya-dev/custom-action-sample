@@ -146,14 +146,6 @@ export const makeDefaultBody = (customMessage1, customMessage2, commitMessage, c
  * @returns {string} - The target string with all placeholders replaced by their corresponding values.
  */
 export const replaceBodyParameters = (target, customMessage1, customMessage2, commitMessage, changedFiles) => {
-  core.group('ReplaceBodyParameters', () => {
-    core.info(`replacing parameters for target: ${target}`)
-    core.info(`commitMessage: ${commitMessage}`)
-    core.info(`changedFiles: ${changedFiles}`)
-    core.info(`customMessage1: ${customMessage1}`)
-    core.info(`customMessage2: ${customMessage2}`)
-    core.info(`context: ${JSON.stringify(context, null, 2)}`)
-  })
   return target
     .replace('{GITHUB_RUN_NUMBER}', context.runNumber)
     .replace('{COMMIT_MESSAGE}', commitMessage)

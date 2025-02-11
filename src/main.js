@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import { context } from '@actions/github'
-import { execSync } from 'child_process'
+import * as exec from '@actions/exec'
 import fs from 'fs'
 import { makeDefaultBody, makeAction, replaceBodyParameters } from './contents'
 
@@ -48,8 +48,7 @@ const getBody = (inputs, commitMessage, changedFiles) => {
     try {
       const templatesContent = fs.readFileSync(inputs.template, { encoding: 'utf8' })
       const processedContent = replaceBodyParameters(templatesContent, inputs.customMessage1, inputs.customMessage2, commitMessage, changedFiles)
-      core.group('Template content', () => core.info(templatesContent))
-      core.group('Processed content', () => core.info(processedContent))
+      core.group('Template body', () => core.info(JSON.stringify(processedContent, null, 2)))
       return JSON.parse(processedContent)
     } catch (err) {
       throw new Error(`Failed to load template from ${inputs.template}: ${err.message}`)
@@ -114,18 +113,27 @@ export async function run() {
   try {
     // get inputs
     const inputs = getInputs()
-    core.group('Inputs', () => core.info(JSON.stringify(inputs, null, 2)))
 
     // Retrieve basic information from GitHub Actions environment variables
     const sha = context.sha
-
+    const execOptions = {
+      ignoreReturnCode: true,
+      silent: !core.isDebug()
+    }
     // Get the latest commit message
-    const commitMessage = execSync(`git show -s --format=%B ${sha}`, { encoding: 'utf8' }).trim()
-    core.info(`commit message: ${commitMessage}`)
+    const { stdout } = await exec.getExecOutput('git', ['show', '-s', '--format=%B', sha], execOptions)
+    const commitMessage = stdout.trim()
 
     // Get the list of changed files from the latest commit
-    const changedFiles = execSync(`git diff-tree --no-commit-id --name-only -r ${sha}`, { encoding: 'utf8' }).trim()
-    core.info(`changed files: ${changedFiles}`)
+    const { stdout: changedFilesStdout } = await exec.getExecOutput('git', ['diff-tree', '--no-commit-id', '--name-only', '-r', sha], execOptions)
+    const changedFiles = changedFilesStdout.trim().split('\n')
+
+    core.group('Inputs', () => {
+      core.info(`inputs: ${JSON.stringify(inputs, null, 2)}`)
+      core.info(`commit message: ${commitMessage}`)
+      core.info(`changed files: ${changedFiles}`)
+      core.info(`context: ${JSON.stringify(context, null, 2)}`)
+    })
 
     // Create the body and actions of the Adaptive Card
     const payload = createAdapterCardPayload(inputs, commitMessage, changedFiles)

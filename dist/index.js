@@ -25,7 +25,7 @@ import require$$1$4 from 'url';
 import require$$3$2 from 'zlib';
 import require$$6 from 'string_decoder';
 import require$$0$9 from 'diagnostics_channel';
-import require$$2$3, { execSync } from 'child_process';
+import require$$2$3 from 'child_process';
 import require$$6$1 from 'timers';
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -31230,6 +31230,8 @@ function requireGithub () {
 
 var githubExports = requireGithub();
 
+var execExports = requireExec();
+
 const titleBlock = {
   type: 'TextBlock',
   text: 'No.{GITHUB_RUN_NUMBER} {COMMIT_MESSAGE}',
@@ -31366,14 +31368,6 @@ const makeDefaultBody = (customMessage1, customMessage2, commitMessage, changedF
  * @returns {string} - The target string with all placeholders replaced by their corresponding values.
  */
 const replaceBodyParameters = (target, customMessage1, customMessage2, commitMessage, changedFiles) => {
-  coreExports.group('ReplaceBodyParameters', () => {
-    coreExports.info(`replacing parameters for target: ${target}`);
-    coreExports.info(`commitMessage: ${commitMessage}`);
-    coreExports.info(`changedFiles: ${changedFiles}`);
-    coreExports.info(`customMessage1: ${customMessage1}`);
-    coreExports.info(`customMessage2: ${customMessage2}`);
-    coreExports.info(`context: ${JSON.stringify(githubExports.context, null, 2)}`);
-  });
   return target
     .replace('{GITHUB_RUN_NUMBER}', githubExports.context.runNumber)
     .replace('{COMMIT_MESSAGE}', commitMessage)
@@ -31432,8 +31426,7 @@ const getBody = (inputs, commitMessage, changedFiles) => {
     try {
       const templatesContent = require$$1.readFileSync(inputs.template, { encoding: 'utf8' });
       const processedContent = replaceBodyParameters(templatesContent, inputs.customMessage1, inputs.customMessage2, commitMessage, changedFiles);
-      coreExports.group('Template content', () => coreExports.info(templatesContent));
-      coreExports.group('Processed content', () => coreExports.info(processedContent));
+      coreExports.group('Template body', () => coreExports.info(JSON.stringify(processedContent, null, 2)));
       return JSON.parse(processedContent)
     } catch (err) {
       throw new Error(`Failed to load template from ${inputs.template}: ${err.message}`)
@@ -31498,18 +31491,27 @@ async function run() {
   try {
     // get inputs
     const inputs = getInputs();
-    coreExports.group('Inputs', () => coreExports.info(JSON.stringify(inputs, null, 2)));
 
     // Retrieve basic information from GitHub Actions environment variables
     const sha = githubExports.context.sha;
-
+    const execOptions = {
+      ignoreReturnCode: true,
+      silent: !coreExports.isDebug()
+    };
     // Get the latest commit message
-    const commitMessage = execSync(`git show -s --format=%B ${sha}`, { encoding: 'utf8' }).trim();
-    coreExports.info(`commit message: ${commitMessage}`);
+    const { stdout } = await execExports.getExecOutput('git', ['show', '-s', '--format=%B', sha], execOptions);
+    const commitMessage = stdout.trim();
 
     // Get the list of changed files from the latest commit
-    const changedFiles = execSync(`git diff-tree --no-commit-id --name-only -r ${sha}`, { encoding: 'utf8' }).trim();
-    coreExports.info(`changed files: ${changedFiles}`);
+    const { stdout: changedFilesStdout } = await execExports.getExecOutput('git', ['diff-tree', '--no-commit-id', '--name-only', '-r', sha], execOptions);
+    const changedFiles = changedFilesStdout.trim().split('\n');
+
+    coreExports.group('Inputs', () => {
+      coreExports.info(`inputs: ${JSON.stringify(inputs, null, 2)}`);
+      coreExports.info(`commit message: ${commitMessage}`);
+      coreExports.info(`changed files: ${changedFiles}`);
+      coreExports.info(`context: ${JSON.stringify(githubExports.context, null, 2)}`);
+    });
 
     // Create the body and actions of the Adaptive Card
     const payload = createAdapterCardPayload(inputs, commitMessage, changedFiles);

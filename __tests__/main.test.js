@@ -1,14 +1,15 @@
 import { jest } from '@jest/globals'
 import * as core from '../__fixtures__/core.js'
 import { context } from '../__fixtures__/context.js'
+import { getExecOutput } from '@actions/exec'
 
 jest.unstable_mockModule('@actions/core', () => core)
 jest.unstable_mockModule('@actions/github', () => {
   return { context }
 })
-jest.unstable_mockModule('child_process', () => ({
-  execSync: jest.fn().mockImplementation(() => 'dummy output')
-}))
+jest.unstable_mockModule('@actions/exec', () => {
+  return { getExecOutput: jest.fn().mockImplementation(() => ({ stdout: 'dummy output' })) }
+})
 context.runNumber = '123'
 context.payload = {
   repository: {
@@ -120,21 +121,9 @@ describe('Custom Action Tests', () => {
   })
 
   it('calls core.setFailed if an error occurs during execution', async () => {
-    // Force execSync to throw an error.
-    const { execSync } = await import('child_process')
-    execSync.mockImplementationOnce(() => {
-      throw new Error('dummy error')
-    })
-
+    // Force getInput to throw an error.
     core.getInput.mockImplementation((name) => {
-      if (name === 'token') return 'dummyToken'
-      if (name === 'webhook-url') return 'https://dummy.url'
-      if (name === 'template') return ''
-      if (name === 'message1') return 'dummyMessage1'
-      if (name === 'message2') return 'dummyMessage2'
-      if (name === 'action-titles') return ''
-      if (name === 'action-urls') return ''
-      return ''
+      throw new Error('dummy error')
     })
 
     await run()
