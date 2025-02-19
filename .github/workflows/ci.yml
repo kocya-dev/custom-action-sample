@@ -58,12 +58,8 @@ jobs:
         id: test-action
         uses: ./
         with:
-          webhook-url: 'https://example.com'
           message1: 'test1'
           message2: 'test2'
-          action-titles: 'title1'
-          action-urls: 'https://www.yahoo.co.jp/'
-          visible-changed-files: true
   test-action-min:
     name: GitHub Actions Test Min
     runs-on: ubuntu-latest
@@ -77,8 +73,6 @@ jobs:
       - name: Test Local Action Min
         id: test-action-min
         uses: ./
-        with:
-          webhook-url: 'https://example.com'
   test-action-template:
     name: GitHub Actions Test Template
     runs-on: ubuntu-latest
@@ -93,13 +87,5 @@ jobs:
         id: test-action
         uses: ./
         with:
-          webhook-url: 'https://example.com'
-          template: './.github/body-template.json'
           message1: 'test1'
           message2: 'test2'
-          action-titles: |
-            title1
-            title2
-          action-urls: |
-            https://www.yahoo.co.jp/
-            https://www.example.com/

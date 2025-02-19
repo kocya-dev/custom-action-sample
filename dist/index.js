@@ -31232,264 +31232,10 @@ var githubExports = requireGithub();
 
 var execExports = requireExec();
 
-const titleBlock = {
-  type: 'TextBlock',
-  text: '#{GITHUB_RUN_NUMBER} {COMMIT_MESSAGE}',
-  id: 'Title',
-  spacing: 'Medium',
-  size: 'large',
-  weight: 'Bolder',
-  color: 'Accent'
-};
-
-const singleTextBlockCustom1 = {
-  type: 'TextBlock',
-  text: '{CUSTOM_MESSAGE_1}',
-  separator: true,
-  wrap: true
-};
-
-const singleTextBlockCustom2 = {
-  type: 'TextBlock',
-  text: '{CUSTOM_MESSAGE_2}',
-  separator: true,
-  wrap: true
-};
-
-const factBlock = {
-  type: 'FactSet',
-  facts: [
-    {
-      title: 'Repository/Branch:',
-      value: '{GITHUB_REPOSITORY} / {BRANCH}'
-    },
-    {
-      title: 'Workflow/Event/Actor:',
-      value: '{GITHUB_WORKFLOW} / {GITHUB_EVENT_NAME} / {GITHUB_ACTOR}'
-    },
-    {
-      title: 'SHA-1:',
-      value: '{GITHUB_SHA}'
-    }
-  ],
-  id: 'acFactSet'
-};
-
-const factBlockChangedFiles = {
-  title: 'Changed files:',
-  value: '{CHANGED_FILES}'
-};
-
-/**
- * Constructs the URL for the current GitHub Actions workflow run.
- *
- * @returns {string} The URL of the current workflow run.
- */
-const getWorkflowUrl = () => {
-  return `${githubExports.context.payload.repository?.html_url}/actions/runs/${githubExports.context.runId}`
-};
-
-/**
- * Retrieves the branch name from the context, stripping the "refs/heads/" prefix.
- *
- * @returns {string} The name of the branch.
- */
-const getBranch = () => {
-  // context.ref の "refs/heads/" プレフィックスを除去する
-  return githubExports.context.ref ? githubExports.context.ref.replace('refs/heads/', '') : ''
-};
-
-/**
- * Creates an array of actions based on the provided action parameters.
- *
- * @param {Array} actionParams - The parameters for the actions to be created.
- * @returns {Array} The array of action objects.
- */
-const makeAction = (titles, urls) => {
-  const actions = [];
-  if (titles.length != urls.length) {
-    throw new Error(`Action titles and URLs must have the same length. Titles: ${titles.length}, URLs: ${urls.length}`)
-  }
-
-  // If no action parameters are provided, return the default action to view the workflow.
-  if ((titles.length == 0 && urls.length == 0) || (titles.length == 1 && urls.length == 1 && !titles[0] && !urls[0])) {
-    actions.push({
-      type: 'Action.OpenUrl',
-      title: 'View Workflow',
-      url: getWorkflowUrl()
-    });
-    return actions
-  }
-  // Create an action for each parameter provided.
-  for (let i = 0; i < titles.length; i++) {
-    if (!titles[i] || !urls[i]) {
-      throw new Error('Action parameters must contain a title and URL.')
-    }
-    actions.push({
-      type: 'Action.OpenUrl',
-      title: titles[i],
-      url: urls[i]
-    });
-  }
-  return actions
-};
-/**
- * Creates a default body for a message with optional custom messages and commit details.
- *
- * @param {string} customMessage1 - The first custom message to include in the body.
- * @param {string} customMessage2 - The second custom message to include in the body.
- * @param {string} commitMessage - The commit message to include in the body.
- * @param {Array} changedFiles - The list of changed files to include in the body.
- * @returns {Object} The constructed body object with the provided parameters.
- */
-const makeDefaultBody = (customMessage1, customMessage2, commitMessage, changedFiles) => {
-  const body = [];
-  body.push(titleBlock);
-  if (customMessage1) {
-    body.push(singleTextBlockCustom1);
-  }
-  const fact = JSON.parse(JSON.stringify(factBlock));
-  if (changedFiles) {
-    fact.facts.push(factBlockChangedFiles);
-  }
-  body.push(fact);
-  if (customMessage2) {
-    body.push(singleTextBlockCustom2);
-  }
-  const replacedBody = replaceBodyParameters(JSON.stringify(body), customMessage1, customMessage2, commitMessage, changedFiles);
-  const parsedBody = JSON.parse(replacedBody);
-  return parsedBody
-};
-
-/**
- * Replaces placeholders in the target string with provided values.
- *
- * @param {string} target - The string containing placeholders to be replaced.
- * @param {string} customMessage1 - Custom message to replace the {CUSTOM_MESSAGE_1} placeholder.
- * @param {string} customMessage2 - Custom message to replace the {CUSTOM_MESSAGE_2} placeholder.
- * @param {string} commitMessage - Commit message to replace the {COMMIT_MESSAGE} placeholder.
- * @param {Array} changedFiles - The list of changed files to include in the body.
- * @returns {string} - The target string with all placeholders replaced by their corresponding values.
- */
-const replaceBodyParameters = (target, customMessage1, customMessage2, commitMessage, changedFiles) => {
-  const changedFilesString = Array.isArray(changedFiles) ? changedFiles.map((file) => `\`${file}\``).join('\\n\\n') : '';
-  return target
-    .replace('{GITHUB_RUN_NUMBER}', githubExports.context.runNumber)
-    .replace('{COMMIT_MESSAGE}', commitMessage)
-    .replace('{CUSTOM_MESSAGE_1}', customMessage1)
-    .replace('{GITHUB_REPOSITORY}', githubExports.context.payload.repository?.name)
-    .replace('{BRANCH}', getBranch())
-    .replace('{GITHUB_EVENT_NAME}', githubExports.context.eventName)
-    .replace('{GITHUB_WORKFLOW}', githubExports.context.workflow)
-    .replace('{GITHUB_ACTOR}', githubExports.context.actor)
-    .replace('{GITHUB_SHA}', githubExports.context.sha)
-    .replace('{CHANGED_FILES}', changedFilesString)
-    .replace('{CUSTOM_MESSAGE_2}', customMessage2)
-};
-
-/**
- * Retrieves and processes input values required for the custom action.
- *
- * @returns {Object} An object containing:
- *   - webhookUrl {string}: The URL of the webhook for notifications.
- *   - template {string}: The template string for formatting messages.
- *   - customMessage1 {string}: The first custom message.
- *   - customMessage2 {string}: The second custom message.
- *   - actionTitles {string[]}: An array of action titles, derived by splitting the input on newlines.
- *   - actionUrls {string[]}: An array of action URLs, derived by splitting the input on newlines.
- */
 const getInputs = () => {
   return {
-    webhookUrl: coreExports.getInput('webhook-url'),
-    template: coreExports.getInput('template'),
     customMessage1: coreExports.getInput('message1'),
-    customMessage2: coreExports.getInput('message2'),
-    actionTitles: coreExports.getInput('action-titles')?.split('\n') || [],
-    actionUrls: coreExports.getInput('action-urls')?.split('\n') || [],
-    visibleChangedFiles: coreExports.getInput('visible-changed-files')
-  }
-};
-/**
- * Generates the body object for the custom action.
- *
- * If a template path is provided in inputs.template, attempts to read and process the template
- * by replacing placeholders with the provided custom messages, commit message, and changed files,
- * and then parses the result as JSON. If no template is provided, returns a default body object.
- *
- * @param {Object} inputs - An object containing input values.
- * @param {string} [inputs.template] - Optional path to the template file.
- * @param {string} inputs.customMessage1 - The first custom message.
- * @param {string} inputs.customMessage2 - The second custom message.
- * @param {string} commitMessage - The commit message used in the body.
- * @param {string[]} changedFiles - Array of file names that were changed.
- * @returns {Object} The body object generated from the template or default values.
- * @throws {Error} Throws an error if the template file specified by inputs.template cannot be loaded or parsed.
- */
-const getBody = (inputs, commitMessage, changedFiles) => {
-  if (inputs.template) {
-    try {
-      const templatesContent = require$$1.readFileSync(inputs.template, { encoding: 'utf8' });
-      const processedContent = replaceBodyParameters(templatesContent, inputs.customMessage1, inputs.customMessage2, commitMessage, changedFiles);
-      coreExports.group('Template body', () => coreExports.info(JSON.stringify(processedContent, null, 2)));
-      return JSON.parse(processedContent)
-    } catch (err) {
-      throw new Error(`Failed to load template from ${inputs.template}: ${err.message}`)
-    }
-  } else {
-    const useChangedFiles = inputs.visibleChangedFiles == 'true' ? changedFiles : undefined;
-    const defaultBody = makeDefaultBody(inputs.customMessage1, inputs.customMessage2, commitMessage, useChangedFiles);
-    coreExports.group('Default body', () => coreExports.info(JSON.stringify(defaultBody, null, 2)));
-    return defaultBody
-  }
-};
-/**
- * Creates the payload for an Adaptive Card containing commit and file change details.
- *
- * @param {Object} inputs - The input parameters for creating the card.
- * @param {string[]} inputs.actionTitles - An array of titles for the action buttons.
- * @param {string[]} inputs.actionUrls - An array of URLs corresponding to each action.
- * @param {string} commitMessage - The commit message to display in the card body.
- * @param {Array} changedFiles - A list of changed files to be included in the card body.
- * @returns {Object} An object representing the Adaptive Card payload with attachments.
- */
-const createAdapterCardPayload = (inputs, commitMessage, changedFiles) => {
-  const bodyContent = getBody(inputs, commitMessage, changedFiles);
-  const actionsContent = makeAction(inputs.actionTitles, inputs.actionUrls);
-
-  return {
-    attachments: [
-      {
-        contentType: 'application/vnd.microsoft.card.adaptive',
-        content: {
-          $schema: 'http://adaptivecards.io/schemas/adaptive-card.json',
-          type: 'AdaptiveCard',
-          version: '1.2',
-          body: bodyContent,
-          actions: actionsContent
-        }
-      }
-    ]
-  }
-};
-/**
- * Sends a POST request to the specified webhook URL with the provided payload.
- *
- * @param {string} webhookUrl - The URL of the webhook to which the POST request is sent.
- * @param {any} payload - The payload to be sent in the POST request body. It should be a JSON string or an object that can be stringified.
- * @returns {Promise<void>} A promise that resolves when the POST request completes successfully, or rejects with an error if the request fails.
- * @throws {Error} Throws an error if the response from the server is not ok.
- */
-const postWebhookUrl = async (webhookUrl, payload) => {
-  const response = await fetch(webhookUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: payload
-  });
-
-  if (!response.ok) {
-    throw new Error(`Request failed: ${response.statusText}`)
+    customMessage2: coreExports.getInput('message2')
   }
 };
 async function run() {
@@ -31497,8 +31243,24 @@ async function run() {
     // get inputs
     const inputs = getInputs();
 
-    // Retrieve basic information from GitHub Actions environment variables
-    const sha = githubExports.context.sha;
+    let sha = '';
+    if (githubExports.context.eventName === 'push') {
+      coreExports.group('This action only supports push events.', () => {
+        coreExports.info('This action only supports push events.');
+        coreExports.info(`branch = ${githubExports.context.ref.replace('refs/heads/', '')}`);
+        coreExports.info(`repository = ${githubExports.context.payload.repository?.name}`);
+        coreExports.info(`actor = ${githubExports.context.actor}`);
+        coreExports.info(`sha = ${githubExports.context.sha}`);
+      });
+      sha = githubExports.context.sha;
+    } else if (githubExports.context.eventName === 'pull_request') {
+      coreExports.info('This action does not support pull request events.');
+      coreExports.info(`branch = ${githubExports.context.payload.pull_request?.head.ref}`);
+      coreExports.info(`repository = ${githubExports.context.payload.repository?.name}`);
+      coreExports.info(`actor = ${githubExports.context.actor}`);
+      coreExports.info(`sha = ${githubExports.context.payload.pull_request?.head.sha}`);
+      sha = githubExports.context.payload.pull_request?.head.sha;
+    }
     const execOptions = {
       ignoreReturnCode: true
       //silent: !core.isDebug()
@@ -31517,13 +31279,6 @@ async function run() {
       coreExports.info(`changed files: ${changedFiles}`);
       coreExports.info(`context: ${JSON.stringify(githubExports.context, null, 2)}`);
     });
-
-    // Create the body and actions of the Adaptive Card
-    const payload = createAdapterCardPayload(inputs, commitMessage, changedFiles);
-    coreExports.group('Payload', () => coreExports.info(JSON.stringify(payload, null, 2)));
-
-    // Send Adaptive Card to webhook-url via POST request
-    await postWebhookUrl(inputs.webhookUrl, payload);
 
     coreExports.group('Result', () => coreExports.info('Message sent successfully.'));
   } catch (error) {

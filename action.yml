@@ -7,28 +7,12 @@ branding:
   color: red
 
 inputs:
-  webhook-url:
-    description: 'Webhook URL for sending the Adaptive Card'
-    required: true
-  template:
-    description: 'Path to the Adaptive Card template'
-    required: false
   message1:
     description: 'Custom message to include in the payload'
     required: false
   message2:
     description: 'Custom message to include in the payload'
     required: false
-  action-titles:
-    description: 'Action titles to include in the payload'
-    required: false
-  action-urls:
-    description: 'Action URLs to include in the payload'
-    required: false
-  visible-changed-files:
-    description: 'Show changed files in the payload'
-    required: false
-    default: 'false'
 runs:
   using: node20
   main: dist/index.js
